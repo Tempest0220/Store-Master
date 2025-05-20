@@ -11,46 +11,43 @@ import org.example.pattern.*;
 // Composite Pattern Test
 public class Main {
     public static void main(String[] args) {
-        Food food = new Food("Food 1", 10.0, "2023-12-31");
-        HalfPrice halfPriceFood = new HalfPrice(food);
-        // TODO
-        // 處理只能裝飾Sellable的問題
-        // 還有是不是所有Sellable的子類可以賦值到Sellable的問題,會不會丟失類型信息
-        // 逆變只是確保類型安全,不會丟失類型信息，可以用instanceof來檢查,然後強制轉型
+        Sellable food = new Food("Food 1", 10.0, "2023-12-31");
+        Sellable halfPriceFood = new HalfPrice(food);
+        Sellable halfhalfPriceFood = new HalfPrice(halfPriceFood);
         Sellable unknownSellable = new Sellable("Unknown", 0.0) {};
+
+
 
 
         SellableGroup group1 = new SellableGroup("Group 1", "This is group 1") {};
 
+        // showItemDetails(halfPriceFood);
+
+        group1.addItem(food);
         group1.addItem(halfPriceFood);
+        group1.addItem(halfhalfPriceFood);
         group1.addItem(unknownSellable);
 
-        System.out.println(group1.getGroupName());
+
         for (SellableComponent item : group1.getChildren()) {
-            if (item instanceof SellablePriceDecorator) {
-                Sellable discountItem = (Sellable) ((SellablePriceDecorator) item).getWrappee();
-
-                // 混亂
-                showSellableInfo(discountItem);
-            }
-            else {
-                showSellableInfo((Sellable) item);
-            }
+            showItemDetails(item);
         }
-
 
     }
 
-    public static void showSellableInfo(Sellable item) {
-        
-        switch (item.getClass().getSimpleName()) {
-            case "Food":
-                Food food = (Food) item;
-                System.out.println(item.getDisplayName() + ": " + "$" + item.getPrice() + " (Expiration Date: " + food.getExpirationDate() + ")");
-                break;
-            default:
-                System.out.println(item.getDisplayName() + ": " + "$" + item.getPrice());
-                break;
+    private static void showItemDetails(SellableComponent item) {
+        if (!(item instanceof SellableGroup)) {
+            Sellable sellable = (Sellable) item;
+            System.out.println("ID: " + sellable.getId());
+            System.out.println("Display Name: " + sellable.getDisplayName());
+            System.out.println("Description: " + sellable.getDescription());
+            System.out.println("Price: " + sellable.getPrice());
+            System.out.println("-----------------------------");
+        } else if (item instanceof SellableGroup) {
+            for (SellableComponent child : ((SellableGroup) item).getChildren()) {
+                showItemDetails(child);
+            }
         }
     }
+
 }
