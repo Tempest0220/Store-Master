@@ -31,10 +31,13 @@ public class ProductManager {
         manager.addProduct("eraser", 20).addNum(30); // 新增另一項貨品，順便設定數量
         pencil.addNum(20); // 假設進貨20支鉛筆
         pencil.substractNum(5); // 假設有人買5枝鉛筆
-        System.out.println("鉛筆剩餘數量:" + pencil.getAmount()); // product.getAmount顯示此商品的數量
+        System.out.println(pencil.getName() + " 剩餘數量:" + pencil.getAmount()); // product.getAmount顯示此商品的數量
 
-        int inputId = 1001; // 假設結帳時，店員輸入ID(假設可能是刷條碼)
+        int inputId = 1001; // 假設結帳時，店員輸入ID(可能是刷條碼)
         Product gottenProduct = manager.fromId(inputId); // 取得此ID的產品
         System.out.println("id " + inputId + " 的產品名稱是 " + gottenProduct.getName() + "，賣" + gottenProduct.getPrice() + "塊錢");
+
+        System.out.println(pencil);
+        System.out.println(gottenProduct);
     }
 }

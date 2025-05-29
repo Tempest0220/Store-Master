@@ -39,5 +39,8 @@ public class Product{
         amount = product.amount;
         price = product.price;
     }
+    public String toString(){
+        return "Product(id: " + id + ", name: " + name + ", amount: " + amount + ", price: " + price + ")";
+    }
 }
 
