@@ -1,20 +1,43 @@
 package org.example.Frame;
 
-public abstract class Product {
-    private String name;
-    private double price;
-    private int ShelvesAmount; // 商品庫存數量
-
-    public Product(String name, double price, int ShelvesAmount) {
-        this.name = name;
-        this.price = price;
-        this.ShelvesAmount = ShelvesAmount;
+public class Product{
+    private final int id;
+    private final String name;
+    private final int price;
+    int getId(){
+        return id;
     }
-
-    public String getName() { return name; }
-    public double getPrice() { return price; }
-    public int getShelvesAmount() { return ShelvesAmount; }
-
-   
+    String getName(){
+        return name;
+    }
+    int getPrice(){
+        return price;
+    }
+    private int amount;
+    void addNum(int num){
+        if (num < 0) throw new IllegalArgumentException("數量不可為負");
+        this.amount += num;
+    }
+    void substractNum(int num){
+        if (num < 0) throw new IllegalArgumentException("數量不可為負");
+        if (this.amount < num) throw new ProductNotEnoughException("庫存不足");
+        this.amount -= num;
+    }
+    int getAmount(){
+        return amount;
+    }
+    Product(int id, String name, int price){
+        this.id = id;
+        this.name = name;
+        this.amount = 0;
+        this.price = price;
+    }
+    // copying constructor
+    Product(Product product){
+        id = product.id;
+        name = product.name;
+        amount = product.amount;
+        price = product.price;
+    }
 }
 
