@@ -15,7 +15,7 @@ public class ProductManager {
     HashMap<Integer, Product> products = new HashMap<>();
     int serial = 1000;
     Product fromId(int id){
-        return new Product(products.get(id));
+        return products.get(id); // 直接回傳參考，讓外部可以透過這個產品管理器取得並增減庫存
     }
     Product addProduct(String name, int price){
         Product productToAdd = new Product(serial, name, price);
