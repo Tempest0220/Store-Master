@@ -1,6 +1,6 @@
 package org.example.Frame;
 
 public interface SalesRule {
-    String MemberShip();
-    double Discount();
+    int getTotalPrice(Product[] products, boolean isMember);
+    int getSingleProductPrice(Product product, boolean isMember);
 }
