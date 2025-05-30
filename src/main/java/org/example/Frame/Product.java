@@ -46,9 +46,9 @@ public class Product{
     }
     public String toString(){
         return "Product(id: " + id +
-                ", name: " + name +
-                ", amount: " + amount +
-                ", price: " + price +
+                ", name: " + getName() +
+                ", amount: " + getAmount() +
+                ", price: " + getPrice() +
                 ")";
     }
     public void display(int hierarchy){

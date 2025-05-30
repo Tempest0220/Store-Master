@@ -3,7 +3,7 @@ package org.example.Frame;
 import java.util.ArrayList;
 
 public class ProductFolder extends Product{
-    private ArrayList<Product> components;
+    private final ArrayList<Product> components;
     ProductFolder(int id, String name) {
         super(id, name, 0);
         components = new ArrayList<>();
@@ -20,14 +20,29 @@ public class ProductFolder extends Product{
     public int getAmount(){
         throw new UnsupportedOperationException("folder don't have amount");
     }
+
     public void add(Product productToAdd){
         components.add(productToAdd);
     }
-
+    boolean hasComposite(String name){
+        for (Product p : components){
+            if (p.getName().equals(name)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public Product getComposite(String name){
+        for (Product p : components){
+            if (p.getName().equals(name)){
+                return p;
+            }
+        }
+        throw new ProductExistenceException("The product '" + name + "' dots not exists");
+    }
 
     public String toString(){
-        return  "ProductFolder(id: " +
-                getId() +
+        return  "ProductFolder(id: " + getId() +
                 ", name: " + getName() +
                 ")";
     }
@@ -50,7 +65,5 @@ public class ProductFolder extends Product{
         books.add(new Product(1003, "筆記本", 30));
         root.add(books);
         root.display();
-
     }
-
 }
