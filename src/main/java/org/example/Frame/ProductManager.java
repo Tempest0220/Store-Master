@@ -1,6 +1,5 @@
 package org.example.Frame;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 // Singleton
