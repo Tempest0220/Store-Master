@@ -1,0 +1,61 @@
+{
+    "cartName": "My Cart",
+    "cartDescription": "Shopping Cart Description",
+    "items": [
+        {
+            "id": "apple",
+            "displayName": "Apple",
+            "description": "Fresh red apple",
+            "price": 0.9,
+            "priceStrategy": "10% off",
+            "quantity": 1,
+            "totalPrice": 0.81
+        },
+        {
+            "id": "banana",
+            "displayName": "Banana",
+            "description": "Ripe yellow banana",
+            "price": 0.45,
+            "priceStrategy": "10% off",
+            "quantity": 1,
+            "totalPrice": 0.41
+        },
+        {
+            "id": "carrot",
+            "displayName": "Carrot",
+            "description": "Crunchy orange carrot",
+            "price": 0.27,
+            "priceStrategy": "10% off",
+            "quantity": 1,
+            "totalPrice": 0.24
+        },
+        {
+            "id": "potato",
+            "displayName": "Potato",
+            "description": "Starchy brown potato",
+            "price": 0.18,
+            "priceStrategy": "10% off",
+            "quantity": 1,
+            "totalPrice": 0.16
+        },
+        {
+            "id": "iphone11",
+            "displayName": "iPhone 11",
+            "description": "Latest Apple iPhone",
+            "price": 999.99,
+            "priceStrategy": "No Discount",
+            "quantity": 1,
+            "totalPrice": 999.99
+        },
+        {
+            "id": "samsungS20",
+            "displayName": "Samsung S20",
+            "description": "Latest Samsung Galaxy",
+            "price": 899.99,
+            "priceStrategy": "No Discount",
+            "quantity": 2,
+            "totalPrice": 1799.98
+        }
+    ],
+    "totalPrice": 2801.59
+}

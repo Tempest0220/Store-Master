@@ -17,11 +17,18 @@ public class BuyingCart extends Component {
         this.cartName = cartName;
         this.cartDescription = cartDescription;
     }
-    public void addItem(CartItem item) {
-        items.add(item);
+    public void addItem(Sellable item) {
+        // 如果購物車裡面已經有這個商品，則增加數量
+        for (CartItem existingItem : items) {
+            if (existingItem.getId().equals(item.getId())) {
+                existingItem.Plus(); // Increase quantity if item already exists
+                return;
+            }
+        }
+        items.add(new CartItem(item));
     }
-    public void removeItem(CartItem item) {
-        items.remove(item);
+    public void removeItem(Sellable item) {
+        items.removeIf(cartItem -> cartItem.getId().equals(item.getId()));
     }
     public ArrayList<CartItem> getItems() {
         return items;
@@ -45,7 +52,8 @@ public class BuyingCart extends Component {
                 json.append(", ");
             }
         }
-        json.append("] }");
+        json.append("]");
+        json.append(String.format(", \"totalPrice\": %.2f }", getPrice()));
         return json.toString();
     }    
 

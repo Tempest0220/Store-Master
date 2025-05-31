@@ -1,6 +1,8 @@
 package org.example;
 
 import org.example.model.SellableGroup;
+import org.example.model.cart.BuyingCart;
+import org.example.model.cart.CartItem;
 import org.example.model.discount.DiscountFactory;
 import org.example.model.PriceStrategy;
 import org.example.model.Sellable;
@@ -61,7 +63,22 @@ public class Main {
         // Print the JSON representation of the item group
         System.out.println(itemGroup.toJson());
 
-        
+        System.out.println("-------------------");
+
+        // BuyingCart example
+        BuyingCart cart = new BuyingCart("My Cart", "Shopping Cart Description");
+        cart.addItem(apple);
+        cart.addItem(banana);
+        cart.addItem(carrot);
+        cart.addItem(potato);
+        cart.addItem(iphone11);
+        cart.addItem(samsungS20);
+        cart.addItem(samsungS20);
+
+        // Print the JSON representation of the cart
+        System.out.println(cart.toJson());
+
+        System.out.println("Total price of cart: " + cart.getPrice());
 
     }
 }
