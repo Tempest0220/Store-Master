@@ -1,31 +1,26 @@
 package org.example.model;
-// Component: SellableComponent
-// Leaf: Sellable
-// Composite: SellableGroup
-public abstract class Sellable implements SellableComponent {
-    // 可以賣的東西有的屬性
-    private String id;          // 識別名
-    private String displayName; // 顯示名
-    private double price;       // 價格
-    private String description; // 基本描述
 
-    // Constructor
-    public Sellable(String id, String displayName, double price, String description) {
+
+
+public abstract class Sellable extends Component {
+    private String id;
+    private String displayName;
+    private String description;
+    private double price; // base price
+    private PriceStrategy priceStrategy; // price strategy, a function field
+
+
+    public Sellable(String id, String displayName, String description, double price, PriceStrategy priceStrategy) {
         this.id = id;
         this.displayName = displayName;
-        this.price = price;
         this.description = description;
-    }
-    public Sellable(String id, double price) {
-        this(id, id, price, "");
+        this.price = price;
+        this.priceStrategy = priceStrategy;
     }
 
-
-    @Override
     public double getPrice() {
-        return price;
+        return priceStrategy.getPrice(price);
     }
-
     public String getId() {
         return id;
     }
@@ -35,4 +30,23 @@ public abstract class Sellable implements SellableComponent {
     public String getDescription() {
         return description;
     }
+
+    public void setPriceStrategy(PriceStrategy priceStrategy) {
+        this.priceStrategy = priceStrategy;
+    }
+
+
+    public static void main(String[] args) {
+        // Example usage
+        PriceStrategy discountStrategy = basePrice -> basePrice * 0.9; // 10% discount
+        Sellable product = new Sellable("1", "Example Product", "This is an example product.", 100.0, discountStrategy) {
+            // Anonymous class for abstract Sellable
+        };
+
+        System.out.println("Product ID: " + product.id);
+        System.out.println("Display Name: " + product.displayName);
+        System.out.println("Description: " + product.description);
+        System.out.println("Price after strategy: " + product.getPrice());
+    }
+
 }

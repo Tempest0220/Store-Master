@@ -1,53 +1,60 @@
 package org.example;
-import org.example.model.Sellable;
-import org.example.model.SellableComponent;
+
 import org.example.model.SellableGroup;
-import org.example.model.SellablePriceDecorator;
-import org.example.model.Food;
-import org.example.model.HalfPrice;
-import org.example.pattern.*;
+import org.example.model.PriceStrategy;
+import org.example.model.Sellable;
 
-
-// Composite Pattern Test
 public class Main {
     public static void main(String[] args) {
-        Sellable food = new Food("Food 1", 10.0, "2023-12-31");
-        Sellable halfPriceFood = new HalfPrice(food);
-        Sellable halfhalfPriceFood = new HalfPrice(halfPriceFood);
-        Sellable unknownSellable = new Sellable("Unknown", 0.0) {};
+        // Example usage of the Composite and Sellable classes
+        PriceStrategy discountStrategy = basePrice -> basePrice * 0.9; // 10% discount
 
-
-
-
-        SellableGroup group1 = new SellableGroup("Group 1", "This is group 1") {};
-
-        // showItemDetails(halfPriceFood);
-
-        group1.addItem(food);
-        group1.addItem(halfPriceFood);
-        group1.addItem(halfhalfPriceFood);
-        group1.addItem(unknownSellable);
-
-
-        for (SellableComponent item : group1.getChildren()) {
-            showItemDetails(item);
-        }
-
-    }
-
-    private static void showItemDetails(SellableComponent item) {
-        if (!(item instanceof SellableGroup)) {
-            Sellable sellable = (Sellable) item;
-            System.out.println("ID: " + sellable.getId());
-            System.out.println("Display Name: " + sellable.getDisplayName());
-            System.out.println("Description: " + sellable.getDescription());
-            System.out.println("Price: " + sellable.getPrice());
-            System.out.println("-----------------------------");
-        } else if (item instanceof SellableGroup) {
-            for (SellableComponent child : ((SellableGroup) item).getChildren()) {
-                showItemDetails(child);
+        Sellable product1 = new Sellable("1", "Apple", "Description of Product 1", 100.0, discountStrategy) {
+            @Override
+            public double getPrice() {
+                return super.getPrice();
             }
-        }
-    }
+        };
 
+        Sellable product2 = new Sellable("2", "Banana", "Description of Product 2", 200.0, discountStrategy) {
+            @Override
+            public double getPrice() {
+                return super.getPrice();
+            }
+        };
+
+        Sellable product3 = new Sellable("3", "Cherry", "Description of Product 3", 300.0, discountStrategy) {
+            @Override
+            public double getPrice() {
+                return super.getPrice();
+            }
+        };
+
+        Sellable product4 = new Sellable("4", "Ice Cream", "Description of Product 4", 400.0, discountStrategy) {
+            @Override
+            public double getPrice() {
+                return super.getPrice();
+            }
+        };
+
+
+
+        SellableGroup composite = new SellableGroup("Composite 1", "Description of Composite 1") {
+            @Override
+            public double getPrice() {
+                return super.getPrice();
+            }
+        };
+
+        composite.add(product1);
+        composite.add(product2);
+        composite.add(product3);
+        composite.add(product4);
+
+        composite.setStrategy("1", p -> p); // Set a different strategy for product1 (20% discount)
+        composite.setStrategy("2", p -> p); // Set a different strategy for product2 (20% discount)
+
+        System.out.println("Total price of composite: " + composite.getPrice());
+
+    }
 }

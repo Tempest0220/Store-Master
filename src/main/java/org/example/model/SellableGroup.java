@@ -1,42 +1,67 @@
 package org.example.model;
+
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
 
-public abstract class SellableGroup implements SellableComponent {
-    private String groupName; // 組合名稱
-    private String description; // 組合描述
-    private Set<SellableComponent> items; // 組合中的項目列表(composite)
+public abstract class SellableGroup extends Component {
+    private String compositeName;
+    private String compositeDescription;
+    ArrayList<Component> components = new ArrayList<>();
 
-    // Constructor
-    public SellableGroup(String groupName, String description) {
-        this.groupName = groupName;
-        this.description = description;
-        this.items = new HashSet<>();
-    }
-
-    public void addItem(SellableComponent item) {
-        items.add(item);
-    }
-
-    public void removeItem(SellableComponent item) {
-        items.remove(item);
+    public SellableGroup(String compositeName, String compositeDescription) {
+        this.compositeName = compositeName;
+        this.compositeDescription = compositeDescription;
     }
 
     @Override
     public double getPrice() {
-        if (items.isEmpty()) {
-            System.out.println("No items in the group.");
+        double totalPrice = 0.0;
+        for (Component component : components) {
+            totalPrice += component.getPrice(); // Sum up the prices of all components
         }
-        return items.stream().mapToDouble(SellableComponent::getPrice).sum();
-        
+        return totalPrice; // Return the total price of the composite
     }
 
-    public Set<SellableComponent> getChildren() {
-        return new HashSet<>(items);
+    public void add(Component component) {
+        components.add(component);
     }
 
-    public String getGroupName() {
-        return groupName;
+    public void remove(Component component) {
+        components.remove(component);
     }
+
+    public ArrayList<Component> getComponents() {
+        return components;
+    }
+
+    public String getCompositeName() {
+        return compositeName;
+    }
+    public String getCompositeDescription() {
+        return compositeDescription;
+    }
+
+    public Sellable findSellable(String id) {
+        // 樹查找
+        for (Component component : components) {
+            if (component instanceof Sellable && ((Sellable) component).getId().equals(id)) {
+                return (Sellable) component; // Return the Sellable component if found
+            } else if (component instanceof SellableGroup) {
+                Sellable found = ((SellableGroup) component).findSellable(id); // Recursive call for nested composites
+                if (found != null) {
+                    return found; // Return if found in nested composite
+                }
+            }
+        }
+        return null; // Return null if not found
+    }
+
+    public void setStrategy(String id, PriceStrategy strategy) {
+        Sellable sellable = findSellable(id);
+        if (sellable != null) {
+            sellable.setPriceStrategy(strategy); // Set the price strategy for the found Sellable
+        } else {
+            System.out.println("Sellable with ID " + id + " not found.");
+        }
+    }
+
 }
