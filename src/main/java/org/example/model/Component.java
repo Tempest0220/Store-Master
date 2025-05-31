@@ -5,5 +5,6 @@ package org.example.model;
 public abstract class Component {
     
     public abstract double getPrice();
+    public abstract String toJson();
 
 }

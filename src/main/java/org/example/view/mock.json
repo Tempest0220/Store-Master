@@ -1,0 +1,48 @@
+[
+    {
+        "id": 1,
+        "displayName": "Mock Item 1",
+        "description": "This is a mock item for testing purposes.",
+        "price": 19.99,
+        "priceAfterDiscount": 17.99,
+        "priceStrategy": "10% off"
+    },
+    {
+        "id": 2,
+        "displayName": "Mock Item 2",
+        "description": "This is another mock item for testing purposes.",
+        "price": 29.99,
+        "priceAfterDiscount": 29.99,
+        "priceStrategy": "Buy one get one free"
+    },
+    {
+        "id": 3,
+        "displayName": "Mock Item 3",
+        "description": "This is yet another mock item for testing purposes.",
+        "price": 39.99,
+        "priceAfterDiscount": 39.99,
+        "priceStrategy": "Free shipping on orders over $50"
+    },
+    {
+        "groupName": "Mock Group",
+        "groupDescription": "This is a mock group of items for testing purposes.",
+        "items": [
+            {
+                "id": 4,
+                "displayName": "Mock Item 4",
+                "description": "This is a mock item in a group for testing purposes.",
+                "price": 49.99,
+                "priceAfterDiscount": 39.99,
+                "priceStrategy": "20% off"
+            },
+            {
+                "id": 5,
+                "displayName": "Mock Item 5",
+                "description": "This is another mock item in a group for testing purposes.",
+                "price": 59.99,
+                "priceAfterDiscount": 59.99,
+                "priceStrategy": ""
+            }
+        ]
+    }
+]
