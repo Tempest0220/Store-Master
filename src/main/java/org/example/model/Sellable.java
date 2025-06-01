@@ -8,14 +8,15 @@ public abstract class Sellable extends Component {
     protected String description;
     protected double price; // base price
     protected PriceStrategy priceStrategy; // price strategy, a function field
+    protected int stock;
 
-
-    public Sellable(String id, String displayName, String description, double price, PriceStrategy priceStrategy) {
+    public Sellable(String id, String displayName, String description, double price, PriceStrategy priceStrategy, int stock) {
         this.id = id;
         this.displayName = displayName;
         this.description = description;
         this.price = price;
         this.priceStrategy = priceStrategy;
+        this.stock = stock;
     }
 
     public double getPrice() {
@@ -32,8 +33,15 @@ public abstract class Sellable extends Component {
     }
     public PriceStrategy getPriceStrategy() {
         return priceStrategy;
-    }   
+    }
+    public int getStock() {
+        return stock;
+    }
 
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
     public void setPriceStrategy(PriceStrategy priceStrategy) {
         this.priceStrategy = priceStrategy;
     }
@@ -49,33 +57,10 @@ public abstract class Sellable extends Component {
         //     "priceStrategy": "10% off"
         // },
         return String.format(
-                "{ \"id\": \"%s\", \"displayName\": \"%s\", \"description\": \"%s\", \"price\": %.2f, \"priceAfterDiscount\": %.2f, \"priceStrategy\": \"%s\" }",
-                id, displayName, description, price, getPrice(), priceStrategy.toString()
+                "{ \"id\": \"%s\", \"displayName\": \"%s\", \"description\": \"%s\", \"price\": %.2f, \"priceAfterDiscount\": %.2f, \"priceStrategy\": \"%s\", \"stock\": %d }",
+                id, displayName, description, price, getPrice(), priceStrategy.toString(), stock
         );
     }
 
-
-    public static void main(String[] args) {
-        // Example usage
-        PriceStrategy discountStrategy = new PriceStrategy() {
-            @Override
-            public double getPrice(double basePrice) {
-                return basePrice * 0.9; // 10% discount
-            }
-
-            @Override
-            public String toString() {
-                return "10% Discount Strategy";
-            }
-            
-        };
-        Sellable product = new Sellable("1", "Example Product", "This is an example product.", 100.0, discountStrategy) {
-            // Anonymous class for abstract Sellable
-        };
-
-        System.out.println(product.toJson());
-
-
-    }
 
 }

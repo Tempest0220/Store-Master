@@ -2,27 +2,44 @@ package org.example.model.cart;
 
 import org.example.model.PriceStrategy;
 import org.example.model.Sellable;
+import org.example.model.discount.DiscountFactory;
+import org.example.model.sellable.ExpirableSellable;
 
-public class CartItem extends Sellable {
+public class CartItem {
+    private Sellable sellable;
     private int quantity;
 
-    public CartItem(String id, String displayName, String description, double price, int quantity, PriceStrategy priceStrategy) {
-        super(id, displayName, description, price, priceStrategy);
+    public CartItem(Sellable sellable, int quantity) {
+        this.sellable = sellable;
         this.quantity = quantity;
     }
 
     public CartItem(String id, String displayName, String description, double price, PriceStrategy priceStrategy) {
-        super(id, displayName, description, price, priceStrategy);
-        this.quantity = 1; // Default quantity is 1
+        this(new Sellable(id, displayName, description, price, priceStrategy, 0){}, 1);
     }
 
     public CartItem(Sellable sellable) {
-        super(sellable.getId(), sellable.getDisplayName(), sellable.getDescription(), sellable.getPrice(), sellable.getPriceStrategy());
-        this.quantity = 1;
+        this(sellable, 1);
     }
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public String getId() {
+        return sellable.getId();
+    }
+    public String getDisplayName() {
+        return sellable.getDisplayName();
+    }
+    public String getDescription() {
+        return sellable.getDescription();
+    }
+    public Sellable getSellable() {
+        return sellable;
+    }
+    public PriceStrategy getPriceStrategy() {
+        return sellable.getPriceStrategy();
     }
 
     public void Plus() {
@@ -35,38 +52,22 @@ public class CartItem extends Sellable {
         }
     }
 
-    @Override
+
     public double getPrice() {
-        return super.getPrice() * quantity; // Total price is base price times quantity
+        return sellable.getPrice() * quantity; // Total price is base price times quantity
     }
 
-    @Override
+
     public String toJson() {
-        // Include quantity in the JSON representation
-        return String.format(
-                "{ \"id\": \"%s\", \"displayName\": \"%s\", \"description\": \"%s\", \"price\": %.2f, \"priceStrategy\": \"%s\", \"quantity\": %d, \"totalPrice\": %.2f }",
-                id, displayName, description, price, priceStrategy.toString(), quantity, getPrice()
-        );
+        return String.format("%s, \"quantity\": %d, \"totalPrice\": %.2f }",
+            sellable.toJson().substring(0, sellable.toJson().lastIndexOf('}')), 
+            quantity, 
+            getPrice()
+            ); // Include quantity in the JSON representation
+
+
     }
 
-    public static void main(String[] args) {
-        // Example usage of CartItem
-        PriceStrategy tenPercentOff = new PriceStrategy() {
-            @Override
-            public double getPrice(double basePrice) {
-                return basePrice * 0.9; // 10% discount
-            }
-            @Override
-            public String toString() {
-                return "10% Discount Strategy";
-            }
-        };
-        CartItem item = new CartItem("1", "Mock Item 1", "This is a mock item for testing purposes.", 19.99, tenPercentOff);
-        System.out.println(item.toJson()); // Output the JSON representation of the cart item
-        item.Plus(); // Increase quantity
-        System.out.println(item.toJson()); // Output updated JSON representation
-        item.Minus(); // Decrease quantity
-        System.out.println(item.toJson()); // Output updated JSON representation
-    }
+    
 
 }

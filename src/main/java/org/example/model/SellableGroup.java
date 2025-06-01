@@ -2,6 +2,8 @@ package org.example.model;
 
 import java.util.ArrayList;
 
+import org.example.model.sellable.ExpirableSellable;
+
 public abstract class SellableGroup extends Component {
     protected String compositeName;
     protected String compositeDescription;
@@ -81,41 +83,4 @@ public abstract class SellableGroup extends Component {
             System.out.println("Sellable with ID " + id + " not found.");
         }
     }
-
-    public static void main(String[] args) {
-        PriceStrategy tenPercentOff = new PriceStrategy() {
-            @Override
-            public double getPrice(double basePrice) {
-                return basePrice * 0.9; // 10% discount
-            }
-            @Override
-            public String toString() {
-                return "10% Discount Strategy";
-            }
-        };
-
-        class TempProduct extends Sellable {
-            public TempProduct(String id, String displayName, String description, double price, PriceStrategy priceStrategy) {
-                super(id, displayName, description, price, priceStrategy);
-            }
-        }
-        
-        // Example usage
-        SellableGroup group = new SellableGroup("root", "product list") {
-            @Override
-            public double getPrice() {
-                return super.getPrice();
-            }
-        };
-
-        group.add(new TempProduct("1", "Apple", "A juicy apple", 100.0, tenPercentOff));
-        group.add(new TempProduct("2", "Banana", "A ripe banana", 200.0, tenPercentOff));
-        group.add(new TempProduct("3", "Cherry", "A sweet cherry", 300.0, tenPercentOff));
-        group.add(new TempProduct("4", "Ice Cream", "A cold ice cream", 400.0, tenPercentOff));
-
-        // Add components and test the functionality
-        // Note: You would typically add Sellable instances to this group
-        System.out.println(group.toJson());
-    }
-
 }

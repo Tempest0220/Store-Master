@@ -6,44 +6,54 @@
             "id": "apple",
             "displayName": "Apple",
             "description": "Fresh red apple",
-            "price": 0.9,
+            "price": 1.0,
+            "priceAfterDiscount": 0.9,
             "priceStrategy": "10% off",
+            "stock": 10,
             "quantity": 1,
-            "totalPrice": 0.81
+            "totalPrice": 0.9
         },
         {
             "id": "banana",
             "displayName": "Banana",
             "description": "Ripe yellow banana",
-            "price": 0.45,
+            "price": 0.5,
+            "priceAfterDiscount": 0.45,
             "priceStrategy": "10% off",
+            "stock": 10,
             "quantity": 1,
-            "totalPrice": 0.41
+            "totalPrice": 0.45
         },
         {
             "id": "carrot",
             "displayName": "Carrot",
             "description": "Crunchy orange carrot",
-            "price": 0.27,
+            "price": 0.3,
+            "priceAfterDiscount": 0.27,
             "priceStrategy": "10% off",
+            "stock": 10,
             "quantity": 1,
-            "totalPrice": 0.24
+            "totalPrice": 0.27
         },
         {
             "id": "potato",
             "displayName": "Potato",
             "description": "Starchy brown potato",
-            "price": 0.18,
+            "price": 0.2,
+            "priceAfterDiscount": 0.18,
             "priceStrategy": "10% off",
+            "stock": 10,
             "quantity": 1,
-            "totalPrice": 0.16
+            "totalPrice": 0.18
         },
         {
             "id": "iphone11",
             "displayName": "iPhone 11",
             "description": "Latest Apple iPhone",
             "price": 999.99,
+            "priceAfterDiscount": 999.99,
             "priceStrategy": "No Discount",
+            "stock": 5,
             "quantity": 1,
             "totalPrice": 999.99
         },
@@ -52,10 +62,23 @@
             "displayName": "Samsung S20",
             "description": "Latest Samsung Galaxy",
             "price": 899.99,
+            "priceAfterDiscount": 899.99,
             "priceStrategy": "No Discount",
+            "stock": 5,
             "quantity": 2,
             "totalPrice": 1799.98
+        },
+        {
+            "id": "milk",
+            "displayName": "Milk",
+            "description": "Fresh milk",
+            "price": 1.5,
+            "priceAfterDiscount": 1.2,
+            "priceStrategy": "20% off",
+            "expirationDate": "2023-12-31",
+            "quantity": 1,
+            "totalPrice": 1.2
         }
     ],
-    "totalPrice": 2801.59
+    "totalPrice": 2802.97
 }
