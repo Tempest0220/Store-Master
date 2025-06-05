@@ -92,6 +92,9 @@ public class ProductManager {
         ProductManager manager = ProductManager.getInstance();
         manager.addFolder("pens");
         manager.addProduct("pens/pencil", 20);
+        manager.addFolder("erasers");
+        Product bigEraser = manager.addProduct("erasers/big eraser", 30);
+        bigEraser.addAmount(100);
         manager.productRoot.display();
     }
 

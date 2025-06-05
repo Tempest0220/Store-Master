@@ -11,7 +11,7 @@ public class ProductFolder extends Product{
     public int getPrice(){
         throw new UnsupportedOperationException("folder don't have price");
     }
-    public void addNum(int num){
+    public void addAmount(int num){
         throw new UnsupportedOperationException("folder cannot add amount");
     }
     public void substractNum(int num){

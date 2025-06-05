@@ -14,7 +14,7 @@ public class Product{
         return price;
     }
     private int amount;
-    public void addNum(int num){
+    public void addAmount(int num){
         if (num < 0) throw new IllegalArgumentException("數量不可為負");
         this.amount += num;
     }
