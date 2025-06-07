@@ -25,13 +25,15 @@ public abstract class GUIWindow extends JFrame {
         UIManager.put("RadioButtonMenuItem.font", DEFAULT_FONT);
 
         // 從可被複寫的函式取得MenuItem的名字
-        String[] menuItemNames = getMenuItemNames();
-        JMenuItem sellingMenuItem = getMenuItem(getSalesName());
-        JMenuItem receivingMenuItem = getMenuItem(getReceivingName());
-        JMenuItem managingMenuItem = getMenuItem(getManagementName());
+        String sellingName = getSalesName();
+        String receivingName = getReceivingName();
+        String managementName = getManagementName();
+        JMenuItem sellingMenuItem = getMenuItem(sellingName);
+        JMenuItem receivingMenuItem = getMenuItem(receivingName);
+        JMenuItem managingMenuItem = getMenuItem(managementName);
 
         // 將切換畫面的MenuItem加進一個Menu
-        JMenu switchMenu = new JMenu("畫面：" + menuItemNames[0]);
+        JMenu switchMenu = new JMenu("畫面：" + sellingName);
         switchMenu.add(sellingMenuItem);
         switchMenu.add(receivingMenuItem);
         switchMenu.add(managingMenuItem);
@@ -54,16 +56,16 @@ public abstract class GUIWindow extends JFrame {
         add(cardPanel);
 
         sellingMenuItem.addActionListener(e -> {
-            cardLayout.show(cardPanel, menuItemNames[0]); // 切換畫面，切換的畫面是根據cardPanel.add()的第二個參數
-            switchMenu.setText("畫面：" + menuItemNames[0]); // 同時切換MenuBar上面的字
+            cardLayout.show(cardPanel, sellingName); // 切換畫面，切換的畫面是根據cardPanel.add()的第二個參數
+            switchMenu.setText("畫面：" + sellingName); // 同時切換MenuBar上面的字
         });
         receivingMenuItem.addActionListener(e -> {
-            cardLayout.show(cardPanel, menuItemNames[1]);
-            switchMenu.setText("畫面：" + menuItemNames[1]);
+            cardLayout.show(cardPanel, receivingName);
+            switchMenu.setText("畫面：" + receivingName);
         });
         managingMenuItem.addActionListener(e -> {
-            cardLayout.show(cardPanel, menuItemNames[2]);
-            switchMenu.setText("畫面：" + menuItemNames[2]);
+            cardLayout.show(cardPanel, managementName);
+            switchMenu.setText("畫面：" + managementName);
         });
     }
 
@@ -77,10 +79,6 @@ public abstract class GUIWindow extends JFrame {
 
     protected JMenuItem getMenuItem(String name){
         return new JMenuItem(name); // 如果有要特殊的MenuItem，複寫此方法
-    }
-
-    protected String[] getMenuItemNames(){
-        return new String[]{"售貨", "進貨", "管理"}; // 可被複寫的畫面的Menu名字
     }
 
     protected String getSalesName(){ return "售貨";}
