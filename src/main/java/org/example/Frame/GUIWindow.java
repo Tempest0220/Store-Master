@@ -10,6 +10,8 @@ public abstract class GUIWindow extends JFrame {
     protected JPanel cardPanel;
     protected JMenuBar menuBar;
 
+    protected static final Font DEFAULT_FONT = new Font("微軟正黑體", Font.PLAIN, 20);
+
     protected void initialize(){
         setTitle(title()); // 從可被複寫的函式設定標題
         setSize(1000, 500); // 設定長寬
@@ -17,17 +19,16 @@ public abstract class GUIWindow extends JFrame {
         setLocationRelativeTo(null); // 讓視窗出現在中間
 
         // 設定Menu相關字體
-        Font barFont = new Font("微軟正黑體", Font.PLAIN, 20);
-        UIManager.put("Menu.font", barFont);
-        UIManager.put("MenuItem.font", barFont);
-        UIManager.put("CheckBoxMenuItem.font", barFont);
-        UIManager.put("RadioButtonMenuItem.font", barFont);
+        UIManager.put("Menu.font", DEFAULT_FONT);
+        UIManager.put("MenuItem.font", DEFAULT_FONT);
+        UIManager.put("CheckBoxMenuItem.font", DEFAULT_FONT);
+        UIManager.put("RadioButtonMenuItem.font", DEFAULT_FONT);
 
         // 從可被複寫的函式取得MenuItem的名字
         String[] menuItemNames = getMenuItemNames();
-        JMenuItem sellingMenuItem = getMenuItem(menuItemNames[0]);
-        JMenuItem receivingMenuItem = getMenuItem(menuItemNames[1]);
-        JMenuItem managingMenuItem = getMenuItem(menuItemNames[2]);
+        JMenuItem sellingMenuItem = getMenuItem(getSalesName());
+        JMenuItem receivingMenuItem = getMenuItem(getReceivingName());
+        JMenuItem managingMenuItem = getMenuItem(getManagementName());
 
         // 將切換畫面的MenuItem加進一個Menu
         JMenu switchMenu = new JMenu("畫面：" + menuItemNames[0]);
@@ -45,10 +46,10 @@ public abstract class GUIWindow extends JFrame {
         cardPanel = new JPanel(cardLayout);
 
         // 從抽象的方法取得panel，加入cardPanel內
-        JPanel[] panels = getPanels();
-        for(int i=0;i<3;i++){
-            cardPanel.add(panels[i], menuItemNames[i]); // 第二個參數是當切換畫面時定位用的
-        }
+
+        cardPanel.add(getSalesPanel(), getSalesName());
+        cardPanel.add(getReceivingPanel(), getReceivingName());
+        cardPanel.add(getManagementPanel(), getManagementName());
 
         add(cardPanel);
 
@@ -82,7 +83,13 @@ public abstract class GUIWindow extends JFrame {
         return new String[]{"售貨", "進貨", "管理"}; // 可被複寫的畫面的Menu名字
     }
 
-    abstract protected JPanel[] getPanels(); // 取得三個畫面，需實作此方法
+    protected String getSalesName(){ return "售貨";}
+    protected String getReceivingName(){ return "進貨";}
+    protected String getManagementName(){ return "管理";}
+
+    abstract protected JPanel getSalesPanel();
+    abstract protected JPanel getReceivingPanel();
+    abstract protected JPanel getManagementPanel();
 
     public void run(){
         setVisible(true);
@@ -91,29 +98,34 @@ public abstract class GUIWindow extends JFrame {
     public static void main(String[] args){
         GUIWindow exampleWindow = new GUIWindow() {
             @Override
-            protected JPanel[] getPanels() {
-                Font ctFont = new Font("微軟正黑體", Font.PLAIN, 20);
-
-                JPanel panel1 = new JPanel();
-                panel1.setBackground(Color.BLUE);
+            protected JPanel getSalesPanel() {
+                JPanel salesPanel = new JPanel();
+                salesPanel.setBackground(Color.BLUE);
                 JLabel sellingLabel = new JLabel("售貨畫面");
-                sellingLabel.setFont(ctFont);
+                sellingLabel.setFont(DEFAULT_FONT);
                 sellingLabel.setForeground(Color.WHITE);
-                panel1.add(sellingLabel);
+                salesPanel.add(sellingLabel);
+                return salesPanel;
+            }
 
-                JPanel panel2 = new JPanel();
-                panel2.setBackground(Color.YELLOW);
+            @Override
+            protected JPanel getReceivingPanel() {
+                JPanel receivingPanel = new JPanel();
+                receivingPanel.setBackground(Color.YELLOW);
                 JLabel receivingLabel = new JLabel("進貨畫面");
-                receivingLabel.setFont(ctFont);
-                panel2.add(receivingLabel);
+                receivingLabel.setFont(DEFAULT_FONT);
+                receivingPanel.add(receivingLabel);
+                return receivingPanel;
+            }
 
-                JPanel panel3 = new JPanel();
-                panel3.setBackground(Color.PINK);
+            @Override
+            protected JPanel getManagementPanel() {
+                JPanel managementPanel = new JPanel();
+                managementPanel.setBackground(Color.PINK);
                 JLabel managingLabel = new JLabel("管理畫面");
-                managingLabel.setFont(ctFont);
-                panel3.add(managingLabel);
-
-                return new JPanel[]{panel1, panel2, panel3};
+                managingLabel.setFont(DEFAULT_FONT);
+                managementPanel.add(managingLabel);
+                return managementPanel;
             }
         };
         exampleWindow.run();
