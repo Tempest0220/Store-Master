@@ -1,4 +1,9 @@
 package org.example.Frame;
 
-public class MoneyManager {
+import java.time.LocalDateTime;
+
+public interface MoneyManager {
+    void addReceivingLog(int[] productIds, int price);
+    void addSalesLog(int[] productIds, int price);
+    int getEarn(LocalDateTime from, LocalDateTime to);
 }
