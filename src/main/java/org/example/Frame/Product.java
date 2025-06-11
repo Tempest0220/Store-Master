@@ -18,7 +18,7 @@ public class Product{
         if (num < 0) throw new IllegalArgumentException("數量不可為負");
         this.amount += num;
     }
-    public void substractNum(int num){
+    public void subAmount(int num){
         if (num < 0) throw new IllegalArgumentException("數量不可為負");
         if (this.amount < num) throw new ProductNotEnoughException("庫存不足");
         this.amount -= num;
@@ -32,14 +32,6 @@ public class Product{
         this.amount = 0;
         this.price = price;
     }
-    // copying constructor
-    Product(Product product){
-        id = product.id;
-        name = product.name;
-        amount = product.amount;
-        price = product.price;
-    }
-
 
     protected String repeat(int count, String with){
         return new String(new char[count]).replace("\0", with);
