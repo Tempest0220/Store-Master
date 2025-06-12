@@ -44,15 +44,34 @@ public class StationeryStoreGUI extends GUIWindow {
         form.add(btnSell);
 
         btnSell.addActionListener(e -> {
-            try{
-                String name = txtProduct.getText();
-                int qty = Integer.parseInt(txtQty.getText());
-                Customer c = members.get(txtMember.getText());
+            String name = txtProduct.getText().trim();
+            // 先檢查商品是否存在
+            if (!((StationeryStore)store).isProductNameExist(name)) {
+                JOptionPane.showMessageDialog(panel,
+                        "商品不存在：" + name,
+                        "錯誤",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int qty;
+            try {
+                qty = Integer.parseInt(txtQty.getText().trim());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(panel,
+                        "數量格式錯誤",
+                        "錯誤",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Customer c = members.get(txtMember.getText().trim());
+            try {
                 store.sell(name, qty, c);
                 log.append("售出 " + qty + "×" + name + (c == null ? " (無會員折扣)\n" : "\n"));
-            }catch(Exception ex){
-                JOptionPane.showMessageDialog(panel, ex.getMessage(),
-                        "錯誤", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(panel,
+                        ex.getMessage(),
+                        "錯誤",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -60,6 +79,7 @@ public class StationeryStoreGUI extends GUIWindow {
         panel.add(new JScrollPane(log), BorderLayout.CENTER);
         return panel;
     }
+
 
     /* ========== 二、進貨面板（原樣） ========== */
     @Override
@@ -73,11 +93,30 @@ public class StationeryStoreGUI extends GUIWindow {
         panel.add(btnRecv);
 
         btnRecv.addActionListener(e -> {
-            try{
-                ((StationeryStore)store).restockWarehouse(txtName.getText(),
-                        Integer.parseInt(txtQty.getText()));
-                JOptionPane.showMessageDialog(panel, "已進貨 " + txtQty.getText() + "×" + txtName.getText());
-            }catch(Exception ex){/* ignore */}
+            String name = txtName.getText().trim();
+            // 檢查商品是否存在
+            if (!((StationeryStore)store).isProductNameExist(name)) {
+                JOptionPane.showMessageDialog(panel,
+                        "商品不存在：" + name,
+                        "錯誤",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int qty;
+            try {
+                qty = Integer.parseInt(txtQty.getText().trim());
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(panel,
+                        "數量格式錯誤",
+                        "錯誤",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ((StationeryStore)store).restockWarehouse(name, qty);
+            JOptionPane.showMessageDialog(panel,
+                    "已進貨 " + qty + "×" + name,
+                    "完成",
+                    JOptionPane.INFORMATION_MESSAGE);
         });
         return panel;
     }
