@@ -43,13 +43,19 @@ public class StationeryStoreGUI extends GUIWindow {
             String name = txtProduct.getText();
             int qty = Integer.parseInt(txtQty.getText());
             String mid = txtMember.getText();
-            Customer c = members.get(mid);
-            if (c == null) {
-                log.append("會員不存在: " + mid + "\n");
-                return;
+            Customer c = members.get(mid);  // mid 不在 members 時，c == null → 無折扣
+            try {
+                store.sell(name, qty, c);
+                log.append("售出 " + qty + "×" + name + (c == null ? " (無會員折扣)" : "") + "\n");
+            } catch (IllegalArgumentException ex) {
+                // 庫存不足的錯誤訊息顯示在 GUI
+                JOptionPane.showMessageDialog(
+                        null,
+                        ex.getMessage(),
+                        "錯誤",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }
-            store.sell(name, qty, c);
-            log.append("售出 " + qty + "×" + name + "\n");
         });
 
         panel.add(form, BorderLayout.NORTH);

@@ -82,13 +82,20 @@ public class StationeryStore extends Store {
     @Override
     public void sell(String productName, int quantity, Customer customer) {
         ProductComponent p = shelfManager.getProduct(productName);
+        // 1) 庫存不足 → 拋例外
         if (p == null || p.getQuantity() < quantity) {
-            System.out.println("Not enough stock on shelf for " + productName);
-        } else {
-            double total = salesRule.applySale(p, quantity, customer);
-            p.setQuantity(p.getQuantity() - quantity);
-            System.out.println("Sold " + quantity + " x " + productName + " for total: " + total);
+            throw new IllegalArgumentException("庫存不足：" + productName);
         }
+        // 2) 計算價格：有會員打折且累點，無會員原價
+        double total;
+        if (customer == null) {
+            total = p.getPrice() * quantity;
+        } else {
+            total = salesRule.applySale(p, quantity, customer);
+        }
+        // 3) 扣貨
+        p.setQuantity(p.getQuantity() - quantity);
+        System.out.printf("Sold %d x %s for total: %.2f\n", quantity, productName, total);
     }
 
     @Override
