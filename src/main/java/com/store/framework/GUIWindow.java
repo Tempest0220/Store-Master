@@ -1,4 +1,4 @@
-package org.example.Frame;
+package com.store.framework;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,6 +6,7 @@ import java.awt.*;
 
 public abstract class GUIWindow extends JFrame {
 
+    protected Store store;
     protected CardLayout cardLayout;
     protected JPanel cardPanel;
     protected JMenuBar menuBar;
@@ -69,7 +70,8 @@ public abstract class GUIWindow extends JFrame {
         });
     }
 
-    public GUIWindow(){
+    public GUIWindow(Store store){
+        this.store = store;
         initialize(); // 設定畫面的建構子
     }
 
@@ -93,39 +95,5 @@ public abstract class GUIWindow extends JFrame {
         setVisible(true);
     }
 
-    public static void main(String[] args){
-        GUIWindow exampleWindow = new GUIWindow() {
-            @Override
-            protected JPanel getSalesPanel() {
-                JPanel salesPanel = new JPanel();
-                salesPanel.setBackground(Color.BLUE);
-                JLabel sellingLabel = new JLabel("售貨畫面");
-                sellingLabel.setFont(DEFAULT_FONT);
-                sellingLabel.setForeground(Color.WHITE);
-                salesPanel.add(sellingLabel);
-                return salesPanel;
-            }
-
-            @Override
-            protected JPanel getReceivingPanel() {
-                JPanel receivingPanel = new JPanel();
-                receivingPanel.setBackground(Color.YELLOW);
-                JLabel receivingLabel = new JLabel("進貨畫面");
-                receivingLabel.setFont(DEFAULT_FONT);
-                receivingPanel.add(receivingLabel);
-                return receivingPanel;
-            }
-
-            @Override
-            protected JPanel getManagementPanel() {
-                JPanel managementPanel = new JPanel();
-                managementPanel.setBackground(Color.PINK);
-                JLabel managingLabel = new JLabel("管理畫面");
-                managingLabel.setFont(DEFAULT_FONT);
-                managementPanel.add(managingLabel);
-                return managementPanel;
-            }
-        };
-        exampleWindow.run();
-    }
 }
+
