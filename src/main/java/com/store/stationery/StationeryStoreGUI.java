@@ -205,11 +205,17 @@ public class StationeryStoreGUI extends GUIWindow {
                     (DefaultMutableTreeNode) productTree.getLastSelectedPathComponent();
             if (node == null) return;
             Object obj = node.getUserObject();
+            StationeryStore s = (StationeryStore) store;
 
-            List<String> cats =
-                    ((StationeryStore)store).getCategories().stream()
-                            .map(ProductCategory::getName)
-                            .toList();
+            java.util.List<String> cats = new ArrayList<>(s.getAllCategories().stream()
+                    .map(ProductCategory::getName).toList());
+
+            // 若為分類，要排除自己與其子孫，並加入「根目錄」選項
+            if (obj instanceof ProductCategory cat) {
+                cats.removeIf(n -> n.equals(cat.getName()) ||
+                        s.isDescendant(cat.getName(), n));
+                cats.add(0, "(根目錄)");
+            }
             if (cats.isEmpty()) return;
 
             String dest = (String) JOptionPane.showInputDialog(
@@ -219,10 +225,10 @@ public class StationeryStoreGUI extends GUIWindow {
             if (dest == null) return;
 
             if (obj instanceof ProductItem item) {
-                ((StationeryStore)store).moveProductToCategory(item.getName(), dest);
-            }
-            else if (obj instanceof ProductCategory cat) {
-                ((StationeryStore)store).moveCategory(cat.getName(), dest);
+                s.moveProductToCategory(item.getName(), dest);
+            } else if (obj instanceof ProductCategory cat) {
+                if ("(根目錄)".equals(dest)) dest = null;
+                s.moveCategory(cat.getName(), dest);
             }
             refreshProductTree();
         });
@@ -328,8 +334,9 @@ public class StationeryStoreGUI extends GUIWindow {
         for(int i=0;i<productTree.getRowCount();i++) productTree.expandRow(i);
     }
     private String chooseCategory(Component parent) {
-        List<String> cats = ((StationeryStore) store).getCategories()
-                .stream().map(ProductCategory::getName).toList();
+        List<String> cats = ((StationeryStore) store)
+                .getAllCategories().stream()
+                .map(ProductCategory::getName).toList();
         if (cats.isEmpty()) return null;
 
         return (String) JOptionPane.showInputDialog(
