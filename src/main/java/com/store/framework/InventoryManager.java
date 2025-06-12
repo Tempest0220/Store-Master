@@ -16,15 +16,19 @@ public class InventoryManager {
 
     public void restock(String name, int quantity) {
         ProductComponent p = products.get(name);
-        if (p != null) {
-            p.setQuantity(p.getQuantity() + quantity);
-        }
+        if (p != null) p.setQuantity(p.getQuantity() + quantity);
+    }
+
+    /* ★ 新增：刪除商品時同步呼叫 */
+    public void removeProduct(String name) {
+        products.remove(name);
     }
 
     public void printInventory() {
         System.out.println("Inventory Status:");
-        products.values().forEach(p -> {
-            System.out.printf("- %s: qty=%d, price=%.2f\n", p.getName(), p.getQuantity(), p.getPrice());
-        });
+        products.values().forEach(p ->
+                System.out.printf("- %s: qty=%d, price=%.2f%n",
+                        p.getName(), p.getQuantity(), p.getPrice())
+        );
     }
 }

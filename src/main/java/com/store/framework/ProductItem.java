@@ -13,22 +13,17 @@ public class ProductItem implements ProductComponent {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
     @Override
-    public double getPrice() {
-        return price;
-    }
+    public double getPrice() { return price; }
 
     @Override
-    public int getQuantity() {
-        return quantity;
-    }
+    public int getQuantity() { return quantity; }
 
     @Override
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    /* ★ 新增：調整售價時用 */
+    public void setPrice(double price) { this.price = price; }
 }
