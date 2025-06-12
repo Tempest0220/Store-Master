@@ -1,7 +1,6 @@
-package com.store.app;
+package com.store.stationery;
 
 import com.store.framework.*;
-import com.store.stationery.StationeryStore;
 
 import javax.swing.*;
 import java.awt.*;

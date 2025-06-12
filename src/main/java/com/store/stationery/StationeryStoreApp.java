@@ -1,6 +1,4 @@
-package com.store.app;
-
-import com.store.stationery.StationeryStore;
+package com.store.stationery;
 
 import javax.swing.SwingUtilities;
 
