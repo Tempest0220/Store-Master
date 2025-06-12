@@ -28,7 +28,7 @@ public class StationeryStoreGUI extends GUIWindow {
 
     /* ========== 一、售貨面板（原樣） ========== */
     @Override
-    protected JPanel getSalesPanel() { /* 與原版相同，略 */
+    protected JPanel getSalesPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         JPanel form = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField txtProduct = new JTextField(10);
@@ -63,7 +63,7 @@ public class StationeryStoreGUI extends GUIWindow {
 
     /* ========== 二、進貨面板（原樣） ========== */
     @Override
-    protected JPanel getReceivingPanel() { /* 不變 */
+    protected JPanel getReceivingPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField txtName = new JTextField(10);
         JTextField txtQty  = new JTextField(3);
@@ -152,11 +152,9 @@ public class StationeryStoreGUI extends GUIWindow {
             Object obj = node.getUserObject();
 
             if (obj instanceof ProductItem item) {
-                // 既有：刪除商品
                 ((StationeryStore)store).deleteProduct(item.getName());
             }
             else if (obj instanceof ProductCategory cat) {
-                // 新增：刪除分類
                 ((StationeryStore)store).removeCategory(cat.getName());
             }
             refreshProductTree();
@@ -169,7 +167,6 @@ public class StationeryStoreGUI extends GUIWindow {
             if (node == null) return;
             Object obj = node.getUserObject();
 
-            // 先抓出所有分類名稱
             List<String> cats =
                     ((StationeryStore)store).getCategories().stream()
                             .map(ProductCategory::getName)
@@ -186,7 +183,6 @@ public class StationeryStoreGUI extends GUIWindow {
                 ((StationeryStore)store).moveProductToCategory(item.getName(), dest);
             }
             else if (obj instanceof ProductCategory cat) {
-                // 新增：移動分類
                 ((StationeryStore)store).moveCategory(cat.getName(), dest);
             }
             refreshProductTree();
@@ -202,7 +198,6 @@ public class StationeryStoreGUI extends GUIWindow {
 
         /* 5. 新增商品 */
         btnAddProd.addActionListener(e -> {
-            /* 取得品名／價格／庫存 */
             JTextField fName  = new JTextField();
             JTextField fPrice = new JTextField();
             JTextField fQty   = new JTextField("0");
@@ -214,29 +209,34 @@ public class StationeryStoreGUI extends GUIWindow {
             if (JOptionPane.showConfirmDialog(panel, form, "新增商品",
                     JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
 
-            /* 1) 若尚無任何分類 → 引導先建分類 */
             if (((StationeryStore) store).getCategories().isEmpty()) {
                 JOptionPane.showMessageDialog(panel, "請先建立分類！", "無分類", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            String cat = chooseCategory(panel);          // 使用者挑分類
+            String cat = chooseCategory(panel);
             if (cat == null) return;
 
-            String   name = fName.getText().trim();
-            double   price;
-            int      qty;
+            String name = fName.getText().trim();
+            double price;
+            int qty;
             try {
                 price = Double.parseDouble(fPrice.getText().trim());
-                qty   = Integer.parseInt(fQty.getText().trim());
+                qty = Integer.parseInt(fQty.getText().trim());
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(panel, "價格或庫存格式錯誤", "輸入錯誤", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            /* 2) 呼叫新簽名：直接帶入初始庫存 */
-            ((StationeryStore) store).addNewProductType(name, price, qty);
-            ((StationeryStore) store).moveProductToCategory(name, cat);
+            StationeryStore s = (StationeryStore) store;
+
+            if (s.isProductNameExist(name)) {
+                JOptionPane.showMessageDialog(panel, "商品名稱重複，無法新增", "錯誤", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            s.addNewProductType(name, price, qty);
+            s.moveProductToCategory(name, cat);
 
             refreshProductTree();
         });
@@ -248,17 +248,14 @@ public class StationeryStoreGUI extends GUIWindow {
     private JPanel createMemberManagePanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        /* 1. 新增會員區 */
         JPanel addMem = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField txtId = new JTextField(6);
         JButton btnAdd   = new JButton("新增會員");
         addMem.add(new JLabel("會員ID：")); addMem.add(txtId); addMem.add(btnAdd);
         panel.add(addMem, BorderLayout.NORTH);
 
-        /* 2. 會員清單 */
         panel.add(new JScrollPane(memberList), BorderLayout.CENTER);
 
-        /* 3. 事件 */
         btnAdd.addActionListener(e -> {
             String id = txtId.getText();
             if(id.isBlank() || members.containsKey(id)) return;
@@ -294,7 +291,7 @@ public class StationeryStoreGUI extends GUIWindow {
     private String chooseCategory(Component parent) {
         List<String> cats = ((StationeryStore) store).getCategories()
                 .stream().map(ProductCategory::getName).toList();
-        if (cats.isEmpty()) return null;   // 再次防呆
+        if (cats.isEmpty()) return null;
 
         return (String) JOptionPane.showInputDialog(
                 parent, "放入分類：", "選擇分類",

@@ -96,6 +96,13 @@ public class StationeryStore extends Store {
         inventoryManager.addProduct(item);
     }
 
+    /**
+     * 代理 InventoryManager 的查詢方法，判斷商品是否存在
+     */
+    public boolean isProductNameExist(String name) {
+        return inventoryManager.isProductNameExist(name);
+    }
+
     /* ------------------------------ Store 規格實作 ------------------------------ */
     @Override
     public void restockWarehouse(String productName, int quantity) {
@@ -136,4 +143,5 @@ public class StationeryStore extends Store {
     /** 保留方法相容性，直接呼叫 showWarehouse() */
     @Override
     public void showShelf() { showWarehouse(); }
+
 }

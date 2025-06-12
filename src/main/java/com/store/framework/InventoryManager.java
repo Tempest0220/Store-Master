@@ -2,7 +2,6 @@ package com.store.framework;
 
 import java.util.*;
 
-// Manages product inventory
 public class InventoryManager {
     private Map<String, ProductComponent> products = new HashMap<>();
 
@@ -19,9 +18,12 @@ public class InventoryManager {
         if (p != null) p.setQuantity(p.getQuantity() + quantity);
     }
 
-    /* ★ 新增：刪除商品時同步呼叫 */
     public void removeProduct(String name) {
         products.remove(name);
+    }
+
+    public boolean isProductNameExist(String name) {
+        return products.containsKey(name);
     }
 
     public void printInventory() {
