@@ -11,8 +11,8 @@ import java.util.List;
 public class StationeryStoreGUI extends GUIWindow {
     private Map<String, Customer> members = new HashMap<>();
     /* --- 會員清單 UI 元件 --- */
-    private DefaultListModel<String> memberModel = new DefaultListModel<>();
-    private JList<String>            memberList  = new JList<>(memberModel);
+    private DefaultListModel<String> memberModel;
+    private JList<String>            memberList ;
     /* --- 商品樹狀結構 UI --- */
     private DefaultTreeModel productTreeModel;
     private JTree            productTree;
@@ -124,19 +124,24 @@ public class StationeryStoreGUI extends GUIWindow {
     /* ========== 三、管理面板（新功能） ========== */
     @Override
     protected JPanel getManagementPanel() {
-        JPanel root = new JPanel(new BorderLayout());
-
-        /* ---------------- 1. 上／下半分割 ---------------- */
-        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        memberModel = new DefaultListModel<>();
+        memberList  = new JList<>(memberModel);
+        // 上：商品管理面板，下：會員管理面板
+        JSplitPane split = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
+                createProductManagePanel(),
+                createMemberManagePanel()
+        );
+        // 視窗調整時保持 6:4
         split.setResizeWeight(0.6);
+        // 等元件都建立完才設定分割線位置
+        SwingUtilities.invokeLater(() -> {
+            // 用比例 API（Java8u40+），或用像素都可以
+            split.setDividerLocation(0.6);
+        });
+
+        JPanel root = new JPanel(new BorderLayout());
         root.add(split, BorderLayout.CENTER);
-
-        /* ■ 上半：商品管理區 */
-        split.setTopComponent(createProductManagePanel());
-
-        /* ■ 下半：會員管理區 */
-        split.setBottomComponent(createMemberManagePanel());
-
         return root;
     }
 
@@ -293,19 +298,38 @@ public class StationeryStoreGUI extends GUIWindow {
     private JPanel createMemberManagePanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
+        // 上方：新增會員區
         JPanel addMem = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField txtId = new JTextField(6);
         JButton btnAdd   = new JButton("新增會員");
-        addMem.add(new JLabel("會員ID：")); addMem.add(txtId); addMem.add(btnAdd);
+        addMem.add(new JLabel("會員ID："));
+        addMem.add(txtId);
+        addMem.add(btnAdd);
         panel.add(addMem, BorderLayout.NORTH);
 
-        panel.add(new JScrollPane(memberList), BorderLayout.CENTER);
+        // 下方：會員列表
+        memberList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        memberList.setVisibleRowCount(8);
+        JScrollPane scroll = new JScrollPane(memberList);
+        scroll.setBorder(BorderFactory.createTitledBorder("會員清單"));
+        panel.add(scroll, BorderLayout.CENTER);
 
         btnAdd.addActionListener(e -> {
-            String id = txtId.getText();
-            if(id.isBlank() || members.containsKey(id)) return;
+            String id = txtId.getText().trim();
+            if (id.isEmpty() || members.containsKey(id)) {
+                JOptionPane.showMessageDialog(panel,
+                        "無效或重複的會員ID：" + id,
+                        "錯誤",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
             members.put(id, new Customer(id));
             memberModel.addElement(id);
+            txtId.setText("");
+            // 強制重繪，確保新加入的文字馬上 visible
+            scroll.revalidate();
+            scroll.repaint();
         });
 
         return panel;
