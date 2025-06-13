@@ -180,10 +180,46 @@ public class StoreGUI extends GUIWindow {
             if(node == null) return;
             Object obj = node.getUserObject();
             if(obj instanceof ProductItem item){
-                String price  = JOptionPane.showInputDialog(panel, "新售價：", item.getPrice());
-                String qty    = JOptionPane.showInputDialog(panel, "新庫存：", item.getQuantity());
-                if(price != null) item.setPrice(Double.parseDouble(price));
-                if(qty   != null) item.setQuantity(Integer.parseInt(qty));
+                String priceStr  = JOptionPane.showInputDialog(panel, "新售價：", item.getPrice());
+                String qtyStr    = JOptionPane.showInputDialog(panel, "新庫存：", item.getQuantity());
+                String discountStr = JOptionPane.showInputDialog(panel, "折扣(0~1，例如0.8表示八折)：", "1.0");
+
+                if(priceStr != null) {
+                    try {
+                        double newPrice = Double.parseDouble(priceStr);
+                        item.setPrice(newPrice);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(panel, "價格格式錯誤", "輸入錯誤", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                if(qtyStr != null) {
+                    try {
+                        int newQty = Integer.parseInt(qtyStr);
+                        item.setQuantity(newQty);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(panel, "庫存格式錯誤", "輸入錯誤", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                if(discountStr != null){
+                    try {
+                        double discountRate = Double.parseDouble(discountStr);
+                        if(discountRate < 0 || discountRate > 1){
+                            JOptionPane.showMessageDialog(panel, "折扣必須介於0和1之間", "輸入錯誤", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            item.setDiscount(new Discount() {
+                                @Override
+                                public double getPrice(double price) {
+                                    return price * discountRate;
+                                }
+                            });
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(panel, "折扣格式錯誤", "輸入錯誤", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 refreshProductTree();
             }
         });
@@ -290,6 +326,7 @@ public class StoreGUI extends GUIWindow {
 
         return panel;
     }
+
 
     /* ---------- 會員管理區 ---------- */
     private JPanel createMemberManagePanel() {

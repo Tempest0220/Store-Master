@@ -57,6 +57,10 @@ public class ProductItem implements ProductComponent {
         this.price = price;
     }
 
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
+    }
+
     @Override
     public String toString() {
         return name + "   (qty=" + quantity + ", price=" + getPrice() + ")";
