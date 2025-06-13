@@ -22,9 +22,21 @@ public class VegetableStore extends Store {
         ProductComponent cabbage = new ProductItem("高麗菜", 30, 0);
         ProductComponent spinach = new ProductItem("菠菜", 25, 0);
         ProductComponent carrot = new ProductItem("紅蘿蔔", 20, 0);
-        ProductComponent potato = new ProductItem("馬鈴薯", 15, 0);
-        ProductComponent expiredCabbage = new ExpiringProductItem("過期高麗菜", 10, 0, LocalDate.now().minusDays(1));
+        ProductComponent potato = new ProductItem("馬鈴薯", 15, 0,
+                new Discount() {
+                    @Override
+                    public double getPrice(double price) {
+                        return price * 0.9; // 馬鈴薯打九折
+                    }
+                });
 
+        ProductComponent expiredCabbage = new ExpiringProductItem("過期高麗菜", 10, 0, LocalDate.now().minusDays(1),
+                new Discount() {
+                    @Override
+                    public double getPrice(double price) {
+                        return price * 0.5; // 過期高麗菜打五折
+                    }
+                });
         leafy.add(cabbage);
         leafy.add(spinach);
         root.add(carrot);

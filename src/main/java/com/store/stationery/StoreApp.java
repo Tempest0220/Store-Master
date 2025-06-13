@@ -17,7 +17,7 @@ public class StoreApp {
 
         // 在 Swing UI Thread 啟動
         SwingUtilities.invokeLater(() -> {
-            StoreGUI gui = new StoreGUI(new Store[]{stationeryStore, vegetableStore});
+            StoreGUI gui = new StoreGUI(new Store[]{vegetableStore, stationeryStore});
             gui.run();
         });
     }

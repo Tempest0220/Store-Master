@@ -10,6 +10,11 @@ public class ExpiringProductItem extends ProductItem {
         this.expiryDate = expiryDate;
     }
 
+    public ExpiringProductItem(String name, double price, int quantity, LocalDate expiryDate, Discount discount) {
+        super(name, price, quantity, discount);
+        this.expiryDate = expiryDate;
+    }
+
     public LocalDate getExpiryDate() { return expiryDate; }
     public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
 
