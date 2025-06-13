@@ -26,4 +26,9 @@ public class ProductItem implements ProductComponent {
 
     /* ★ 新增：調整售價時用 */
     public void setPrice(double price) { this.price = price; }
+
+    @Override
+    public String toString() {
+        return name + "   (qty=" + quantity + ", price=" + price + ")";
+    }
 }
