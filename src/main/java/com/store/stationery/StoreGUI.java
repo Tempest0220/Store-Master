@@ -17,14 +17,14 @@ public class StoreGUI extends GUIWindow {
     private DefaultTreeModel productTreeModel;
     private JTree            productTree;
 
-    public StoreGUI(Store store) {
-        super(store);
+    public StoreGUI(Store[] stores) {
+        super(stores);
         members.put("A1001", new Customer("A1001"));
         memberModel.addElement("A1001");
     }
 
     @Override
-    protected String title() { return store.getName() + " 管理介面"; }
+    protected String title() { return currentStore.getName() + " 管理介面"; }
 
     /* ========== 一、售貨面板（原樣） ========== */
     @Override
@@ -46,7 +46,7 @@ public class StoreGUI extends GUIWindow {
         btnSell.addActionListener(e -> {
             String name = txtProduct.getText().trim();
             // 先檢查商品是否存在
-            if (!store.RegistryIsProductNameExist(name)) {
+            if (!currentStore.RegistryIsProductNameExist(name)) {
                 JOptionPane.showMessageDialog(panel,
                         "商品不存在：" + name,
                         "錯誤",
@@ -65,7 +65,7 @@ public class StoreGUI extends GUIWindow {
             }
             Customer c = members.get(txtMember.getText().trim());
             try {
-                store.sell(name, qty, c);
+                currentStore.sell(name, qty, c);
                 log.append("售出 " + qty + "×" + name + (c == null ? " (無會員折扣)\n" : "\n"));
             } catch (IllegalArgumentException ex) {
                 JOptionPane.showMessageDialog(panel,
@@ -95,7 +95,7 @@ public class StoreGUI extends GUIWindow {
         btnRecv.addActionListener(e -> {
             String name = txtName.getText().trim();
             // 檢查商品是否存在
-            if (!store.RegistryIsProductNameExist(name)) {
+            if (!currentStore.RegistryIsProductNameExist(name)) {
                 JOptionPane.showMessageDialog(panel,
                         "商品不存在：" + name,
                         "錯誤",
@@ -112,7 +112,7 @@ public class StoreGUI extends GUIWindow {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            (store).RegistrySetProductStock(name, qty);
+            (currentStore).RegistrySetProductStock(name, qty);
             JOptionPane.showMessageDialog(panel,
                     "已進貨 " + qty + "×" + name,
                     "完成",
@@ -196,10 +196,10 @@ public class StoreGUI extends GUIWindow {
             Object obj = node.getUserObject();
 
             if (obj instanceof ProductItem item) {
-                (store).RegistryDeleteProduct(item.getName());
+                (currentStore).RegistryDeleteProduct(item.getName());
             }
             else if (obj instanceof ProductCategory cat) {
-                (store).CategoryRemoveCategoryAndProduct(cat.getName());
+                (currentStore).CategoryRemoveCategoryAndProduct(cat.getName());
             }
             refreshProductTree();
         });
@@ -211,13 +211,13 @@ public class StoreGUI extends GUIWindow {
             if (node == null) return;
             Object obj = node.getUserObject();
 
-            java.util.List<String> cats = new ArrayList<>(store.CategoryGetAllCategories().stream()
+            java.util.List<String> cats = new ArrayList<>(currentStore.CategoryGetAllCategories().stream()
                     .map(ProductCategory::getName).toList());
 
             // 若為分類，要排除自己與其子孫，並加入「根目錄」選項
             if (obj instanceof ProductCategory cat) {
                 cats.removeIf(n -> n.equals(cat.getName()) ||
-                        store.isCategoryDescendant(cat.getName(), n));
+                        currentStore.isCategoryDescendant(cat.getName(), n));
                 cats.add(0, "(根目錄)");
             }
             if (cats.isEmpty()) return;
@@ -229,10 +229,10 @@ public class StoreGUI extends GUIWindow {
             if (dest == null) return;
 
             if (obj instanceof ProductItem item) {
-                store.CategoryAddProduct(item.getName(), dest);
+                currentStore.CategoryAddProduct(item.getName(), dest);
             } else if (obj instanceof ProductCategory cat) {
                 if ("(根目錄)".equals(dest)) dest = null;
-                store.CategoryMoveCategoryAndProducts(cat.getName(), dest);
+                currentStore.CategoryMoveCategoryAndProducts(cat.getName(), dest);
             }
             refreshProductTree();
         });
@@ -241,7 +241,7 @@ public class StoreGUI extends GUIWindow {
         btnAddCat.addActionListener(e -> {
             String name = JOptionPane.showInputDialog(panel, "分類名稱：");
             if(name == null || name.isBlank()) return;
-            (store).CategoryAddNewCategory(name);
+            (currentStore).CategoryAddNewCategory(name);
             refreshProductTree();
         });
 
@@ -258,7 +258,7 @@ public class StoreGUI extends GUIWindow {
             if (JOptionPane.showConfirmDialog(panel, form, "新增商品",
                     JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
 
-            if (store.CategoryGetCategories().isEmpty()) {
+            if (currentStore.CategoryGetCategories().isEmpty()) {
                 JOptionPane.showMessageDialog(panel, "請先建立分類！", "無分類", JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -277,13 +277,13 @@ public class StoreGUI extends GUIWindow {
                 return;
             }
 
-            if (store.RegistryIsProductNameExist(name)) {
+            if (currentStore.RegistryIsProductNameExist(name)) {
                 JOptionPane.showMessageDialog(panel, "商品名稱重複，無法新增", "錯誤", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            store.RegistryAddNewProduct(name, price, qty);
-            store.CategoryAddProduct(name, cat);
+            currentStore.RegistryAddNewProduct(name, price, qty);
+            currentStore.CategoryAddProduct(name, cat);
 
             refreshProductTree();
         });
@@ -335,7 +335,7 @@ public class StoreGUI extends GUIWindow {
     /* ========== 工具方法 ========== */
     private DefaultMutableTreeNode buildTreeRoot(){
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("ROOT");
-        for(ProductCategory cat : store.CategoryGetCategories()){
+        for(ProductCategory cat : currentStore.CategoryGetCategories()){
             DefaultMutableTreeNode catNode = new DefaultMutableTreeNode(cat);
             buildChildren(catNode, cat);
             root.add(catNode);
@@ -355,7 +355,7 @@ public class StoreGUI extends GUIWindow {
         for(int i=0;i<productTree.getRowCount();i++) productTree.expandRow(i);
     }
     private String chooseCategory(Component parent) {
-        List<String> cats = store
+        List<String> cats = currentStore
                 .CategoryGetAllCategories().stream()
                 .map(ProductCategory::getName).toList();
         if (cats.isEmpty()) return null;

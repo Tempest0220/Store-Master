@@ -2,11 +2,13 @@ package com.store.framework;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public abstract class GUIWindow extends JFrame {
 
-    protected Store store;
+    protected ArrayList<Store> stores = new ArrayList<>();
+    protected Store currentStore;
     protected CardLayout cardLayout;
     protected JPanel cardPanel;
     protected JMenuBar menuBar;
@@ -70,8 +72,11 @@ public abstract class GUIWindow extends JFrame {
         });
     }
 
-    public GUIWindow(Store store){
-        this.store = store;
+    public GUIWindow(Store[] stores){
+        for (Store store : stores) {
+            this.stores.add(store); // 將所有的Store加入到stores列表中
+        }
+        currentStore = this.stores.get(0);
         initialize(); // 設定畫面的建構子
     }
 
