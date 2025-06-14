@@ -1,9 +1,10 @@
 // src/main/java/com/store/stationery/StationeryStore.java
-package com.store.real.realStore.stationary;
+package com.store.real.normalStore.stationary;
 
 import com.store.framework.*;
+import com.store.real.normalStore.NormalSalesGUIStore;
 
-public class StationeryStore extends Store {
+public class StationeryStore extends NormalSalesGUIStore {
     public StationeryStore(String name, SalesRule rule) {
         super(name, rule);
         initStore();
@@ -56,12 +57,6 @@ public class StationeryStore extends Store {
 
         System.out.printf("Sold %d x %s for total: %.2f%n",
                 quantity, productName, total);
-    }
-    public ProductComponent getProduct(String key){
-        return productRegistry.getProduct(key);
-    }
-    public double applySale(ProductComponent p, int qty, Customer customer){
-        return salesRule.applySale(p, qty, customer);
     }
 
 }

@@ -1,10 +1,11 @@
-package com.store.real.realStore.vegetable;
+package com.store.real.normalStore.vegetable;
 
 import com.store.framework.*;
+import com.store.real.normalStore.NormalSalesGUIStore;
 
 import java.time.LocalDate;
 
-public class VegetableStore extends Store {
+public class VegetableStore extends NormalSalesGUIStore {
     public VegetableStore(String name, SalesRule rule) {
         super(name, rule);
         initStore();

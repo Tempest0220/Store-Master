@@ -1,24 +1,20 @@
-package com.store.real.realStore;
+package com.store.gui.concretePanels;
 
 import com.store.framework.*;
-import com.store.real.realStore.stationary.StationeryStore;
 
 import javax.swing.*;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import java.util.*;
-import java.util.List;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.List;
 
+public class NormalManagementPanel extends JPanel {
+    private final Store store;
+    private final Map<String, Customer> members;
 
-
-public class StoreGUI extends GUIWindow {
-    private final Map<String, Customer> members = new HashMap<>();
     /* --- 會員清單 UI 元件 --- */
     private DefaultListModel<String> memberModel;
     private JList<String>            memberList ;
@@ -26,204 +22,18 @@ public class StoreGUI extends GUIWindow {
     private DefaultTreeModel productTreeModel;
     private JTree            productTree;
 
-    public StoreGUI(Store store) {
-        super(store);
-        members.put("A1001", new Customer("A1001"));
-        memberModel.addElement("A1001");
+    public NormalManagementPanel(Store store, Map<String, Customer> members) {
+        super(new BorderLayout());
+        this.store   = store;
+        this.members = members;
+        build();
     }
 
-    @Override
-    protected String title() { return store.getName() + " 管理介面"; }
-
-    /* ========== 一、售貨面板（原樣） ========== */
-    @Override
-    protected JPanel getSalesPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        // 1. 會員輸入區
-        JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        memberPanel.add(new JLabel("會員ID："));
-        JTextField txtMemberID = new JTextField(8);
-        memberPanel.add(txtMemberID);
-        panel.add(memberPanel, BorderLayout.NORTH);
-
-        // 2. 左：商品樹
-        DefaultTreeModel treeModel = new DefaultTreeModel(buildTreeRoot());
-        JTree productTree = new JTree(treeModel);
-        productTree.setRootVisible(false);
-        productTree.setShowsRootHandles(true);
-        productTree.setCellRenderer(new ProductTreeCellRenderer());
-        JScrollPane treeScroll = new JScrollPane(productTree);
-        treeScroll.setPreferredSize(new Dimension(300, 0));
-
-        // 3. 右：暫存清單
-        DefaultListModel<String> cartListModel = new DefaultListModel<>();
-        JList<String> cartList = new JList<>(cartListModel);
-        JScrollPane cartScroll = new JScrollPane(cartList);
-        cartScroll.setBorder(BorderFactory.createTitledBorder("暫存清單"));
-
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                treeScroll, cartScroll);
-        split.setResizeWeight(0.6);
-
-        // 4. 底部：總價、按鈕
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel totalLabel   = new JLabel("總價：0.00");
-        JButton btnClear    = new JButton("清除清單");
-        JButton btnCheckout = new JButton("結帳");
-        btnCheckout.setEnabled(false); // 初始停用
-        footer.add(totalLabel);
-        footer.add(btnClear);
-        footer.add(btnCheckout);
-
-        panel.add(split, BorderLayout.CENTER);
-        panel.add(footer, BorderLayout.SOUTH);
-
-        // 購物車資料結構
-        Map<String,Integer> cart = new HashMap<>();
-
-        // 更新總價＆按鈕狀態
-        Runnable updateTotal = () -> {
-            String memberId = txtMemberID.getText().trim();
-            Customer member = members.get(memberId);
-            boolean hasValidMember = memberId.isEmpty() || (member != null);
-            btnCheckout.setEnabled(hasValidMember && !cart.isEmpty());
-
-            double total = 0;
-            for (var entry : cart.entrySet()) {
-                String key = entry.getKey();
-                int qty    = entry.getValue();
-                ProductComponent p = ((StationeryStore)store).getProduct(key);
-                if (p == null) continue;
-                double base = p.getPrice() * qty;
-                if (!memberId.isEmpty() && member != null) {
-                    // 使用 applySale 但不影響真實會員點數
-                    total += ((StationeryStore)store).applySale(p, qty, new Customer(memberId));
-                } else {
-                    total += base;
-                }
-            }
-            totalLabel.setText("總價：" + String.format("%.2f", total));
-        };
-
-        // 會員輸入變動時
-        txtMemberID.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e)  { updateTotal.run(); }
-            public void removeUpdate(DocumentEvent e)  { updateTotal.run(); }
-            public void changedUpdate(DocumentEvent e) { updateTotal.run(); }
-        });
-
-        // 雙擊樹狀選商品加入暫存
-        productTree.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
-                    TreePath path = productTree.getPathForLocation(e.getX(), e.getY());
-                    if (path == null) return;
-                    Object node = ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
-                    if (node instanceof ProductItem item) {
-                        String name = item.getName();
-                        cart.put(name, cart.getOrDefault(name, 0) + 1);
-                        // 更新 listModel
-                        cartListModel.clear();
-                        for (var entry : cart.entrySet()) {
-                            String key = entry.getKey();
-                            int qty    = entry.getValue();
-                            ProductComponent p = ((StationeryStore)store).getProduct(key);
-                            double price = p.getPrice() * qty;
-                            cartListModel.addElement(
-                                    key + " x " + qty + " = " + String.format("%.2f", price)
-                            );
-                        }
-                        updateTotal.run();
-                    }
-                }
-            }
-        });
-
-        // 清除清單
-        btnClear.addActionListener(e -> {
-            cart.clear();
-            cartListModel.clear();
-            updateTotal.run();
-        });
-
-        // 結帳
-        btnCheckout.addActionListener(e -> {
-            String memberId = txtMemberID.getText().trim();
-            Customer member = members.get(memberId);
-            StringBuilder sb = new StringBuilder();
-            for (var entry : cart.entrySet()) {
-                String key = entry.getKey();
-                int qty    = entry.getValue();
-                try {
-                    store.sell(key, qty, member);
-                    sb.append("售出 ").append(qty).append("×").append(key).append("\n");
-                } catch (IllegalArgumentException ex) {
-                    sb.append("失敗：").append(ex.getMessage()).append("\n");
-                }
-            }
-            JOptionPane.showMessageDialog(panel, sb.toString(), "結帳結果",
-                    JOptionPane.INFORMATION_MESSAGE);
-            cart.clear();
-            cartListModel.clear();
-            updateTotal.run();
-        });
-
-        // 初始拆分位置
-        SwingUtilities.invokeLater(() -> split.setDividerLocation(0.6));
-
-        return panel;
-    }
-
-
-
-
-    /* ========== 二、進貨面板（原樣） ========== */
-    @Override
-    protected JPanel getReceivingPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField txtName = new JTextField(10);
-        JTextField txtQty  = new JTextField(3);
-        JButton btnRecv    = new JButton("進貨");
-        panel.add(new JLabel("品名：")); panel.add(txtName);
-        panel.add(new JLabel("數量：")); panel.add(txtQty);
-        panel.add(btnRecv);
-
-        btnRecv.addActionListener(e -> {
-            String name = txtName.getText().trim();
-            // 檢查商品是否存在
-            if (!store.RegistryIsProductNameExist(name)) {
-                JOptionPane.showMessageDialog(panel,
-                        "商品不存在：" + name,
-                        "錯誤",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            int qty;
-            try {
-                qty = Integer.parseInt(txtQty.getText().trim());
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(panel,
-                        "數量格式錯誤",
-                        "錯誤",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            (store).RegistrySetProductStock(name, qty);
-            JOptionPane.showMessageDialog(panel,
-                    "已進貨 " + qty + "×" + name,
-                    "完成",
-                    JOptionPane.INFORMATION_MESSAGE);
-        });
-        return panel;
-    }
-
-    /* ========== 三、管理面板（新功能） ========== */
-    @Override
-    protected JPanel getManagementPanel() {
+    private void build(){
         memberModel = new DefaultListModel<>();
         memberList  = new JList<>(memberModel);
+        memberModel.addElement("A1001");
+
         // 上：商品管理面板，下：會員管理面板
         JSplitPane split = new JSplitPane(
                 JSplitPane.VERTICAL_SPLIT,
@@ -237,13 +47,8 @@ public class StoreGUI extends GUIWindow {
             // 用比例 API（Java8u40+），或用像素都可以
             split.setDividerLocation(0.6);
         });
-
-        JPanel root = new JPanel(new BorderLayout());
-        root.add(split, BorderLayout.CENTER);
-        return root;
+        add(split, BorderLayout.CENTER);
     }
-
-    /* ---------- 商品管理區 ---------- */
     private JPanel createProductManagePanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -419,9 +224,6 @@ public class StoreGUI extends GUIWindow {
 
         return panel;
     }
-
-
-    /* ---------- 會員管理區 ---------- */
     private JPanel createMemberManagePanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -515,4 +317,5 @@ public class StoreGUI extends GUIWindow {
             return this;
         }
     }
+
 }
