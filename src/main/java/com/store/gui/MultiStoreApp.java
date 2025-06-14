@@ -2,8 +2,11 @@ package com.store.gui;
 
 import com.store.framework.*;
 import com.store.gui.concreteFactory.DefaultStorePanelFactory;
+import com.store.gui.concreteFactory.RestaurantPanelFactory;
 import com.store.real.normalStore.stationary.StationeryStore;
 import com.store.real.normalStore.vegetable.VegetableStore;
+import com.store.real.restaurant.RestaurantSalesRule;
+import com.store.real.restaurant.RestaurantStore;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +35,11 @@ public class MultiStoreApp extends JFrame {
                 "My Stationery Shop",
                 new MembershipSalesRule(0.05)));
 
+        RestaurantSalesRule restaurantSalesRule = new RestaurantSalesRule(null);
+        RestaurantStore restaurantStore = new RestaurantStore("My Restaurant", restaurantSalesRule);
+        createAndAddStore("餐廳", restaurantStore);
+        restaurantSalesRule.setStore(restaurantStore);
+
         // 設定選單
         storeSelector.addActionListener(e -> {
             String selected = (String) storeSelector.getSelectedItem();
@@ -56,7 +64,11 @@ public class MultiStoreApp extends JFrame {
     }
 
     private void createAndAddStore(String key, Store store) {
-        StoreGUI gui = new StoreGUI(store, new DefaultStorePanelFactory());
+        StoreGUI gui;
+        if (store instanceof RestaurantStore)
+            gui = new StoreGUI(store, new RestaurantPanelFactory());
+        else
+            gui = new StoreGUI(store, new DefaultStorePanelFactory());
         storeGUIs.put(key, gui);
         mainPanel.add(gui, key);
         storeSelector.addItem(key);
