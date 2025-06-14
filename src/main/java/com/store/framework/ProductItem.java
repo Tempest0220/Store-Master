@@ -5,7 +5,7 @@ public class ProductItem implements ProductComponent {
     private String name;
     private double price;
     private int quantity;
-    private Discount discount;
+    protected Discount discount;
 
     public ProductItem(String name, double price, int quantity) {
         this.name = name;
@@ -17,12 +17,6 @@ public class ProductItem implements ProductComponent {
                 return price;
             }
         };
-        // 因為不知道GUI怎麼調用，所以price不能隨quantity、customer變化
-//            @Override
-//            public double getPrice(double price, int quantity, Customer customer) {
-//                return price;
-//            }
-//        };
     }
 
     public ProductItem(String name, double price, int quantity, Discount discount) {
@@ -63,6 +57,11 @@ public class ProductItem implements ProductComponent {
 
     @Override
     public String toString() {
-        return name + "   (qty=" + quantity + ", price=" + getPrice() + ")";
+        if (discount.getName().isEmpty()){
+            return name + "   (qty=" + quantity + ", price=" + getPrice() + ")";
+        }else{
+            return name + "   (qty=" + quantity + ", price=" + getPrice() + "(" + discount.getName() + "))";
+        }
+
     }
 }

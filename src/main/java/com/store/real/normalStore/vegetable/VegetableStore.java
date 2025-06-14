@@ -23,21 +23,9 @@ public class VegetableStore extends NormalSalesGUIStore {
         ProductComponent cabbage = new ProductItem("高麗菜", 30, 0);
         ProductComponent spinach = new ProductItem("菠菜", 25, 0);
         ProductComponent carrot = new ProductItem("紅蘿蔔", 20, 0);
-        ProductComponent potato = new ProductItem("馬鈴薯", 15, 0,
-                new Discount() {
-                    @Override
-                    public double getPrice(double price) {
-                        return price * 0.9; // 馬鈴薯打九折
-                    }
-                });
+        ProductComponent potato = new ProductItem("馬鈴薯", 15, 0, new RateDiscount(0.9));
 
-        ProductComponent expiredCabbage = new ExpiringProductItem("即期高麗菜", 10, 0, LocalDate.now().minusDays(1),
-                new Discount() {
-                    @Override
-                    public double getPrice(double price) {
-                        return price * 0.5; // 即期高麗菜打五折
-                    }
-                });
+        ProductComponent expiredCabbage = new ExpiringProductItem("即期高麗菜", 10, 0, LocalDate.now().minusDays(1), new RateDiscount(0.5));
         leafy.add(cabbage);
         leafy.add(spinach);
         root.add(carrot);

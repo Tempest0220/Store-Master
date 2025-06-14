@@ -20,7 +20,11 @@ public class ExpiringProductItem extends ProductItem {
 
     @Override
     public String toString() {
-        return getName() + " (qty=" + getQuantity() + ", price=" + getPrice() +
+        if(discount.getName().isEmpty())
+            return getName() + " (qty=" + getQuantity() + ", price=" + getPrice() +
                 ", expiry=" + expiryDate + ")";
+        else
+            return getName() + " (qty=" + getQuantity() + ", price=" + getPrice() +
+                    ", expiry=" + expiryDate + "(" + discount.getName() + "))";
     }
 }
