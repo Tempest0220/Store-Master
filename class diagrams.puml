@@ -1,0 +1,171 @@
+@startuml CoreFramework
+
+' ===== 折扣策略 =====
+interface Discount {
+  +getPrice(price): double
+  +getName(): String
+}
+class RateDiscount extends Discount{
+  -rate: double
+  +getPrice(price)
+  +getName()
+}
+
+' ===== 商品 Composite =====
+interface ProductComponent {
+  +getName(): String
+  +getPrice(): double
+  +getQuantity(): int
+  +setQuantity(qty)
+  +add(child)
+  +remove(child)
+  +getChildren(): List
+}
+
+abstract class ProductItem implements ProductComponent {
+  -name: String
+  -price: double
+  -quantity: int
+  -discount: Discount
+}
+
+class ExpiringProductItem extends ProductItem {
+  -expiryDate: LocalDate
+}
+
+class ProductCategory implements ProductComponent {
+  -children: List<ProductComponent>
+}
+
+ProductCategory "1" *-- "0..*" ProductComponent
+ProductItem --> Discount
+
+' ===== 庫存 =====
+class InventoryManager {
+  -products: Map<String,ProductComponent>
+  +addProduct(p)
+  +getProduct(name)
+  +restock(name,qty)
+}
+InventoryManager --> ProductCategory
+InventoryManager -> ProductComponent
+
+' ===== 計價策略 =====
+interface SalesRule {
+  +applySale(items: Map<ProductComponent,Integer>, cust)
+  +applySale(product, qty, cust)
+}
+class SimpleSalesRule
+class MembershipSalesRule {
+  -discountRate: double
+}
+SalesRule <|.. SimpleSalesRule
+SalesRule <|.. MembershipSalesRule
+
+ProductComponent --> SalesRule : 售價查詢\n(於 Store.sell)
+
+@enduml
+
+@startuml GUIFactory
+
+class StoreGUI {
+  -store: Store
+  -factory: StorePanelFactory
+  -menuBar: JMenuBar
+}
+
+interface StorePanelFactory {
+  +createSalesPanel(store,members): JPanel
+  +createReceivingPanel(store): JPanel
+  +createManagementPanel(store,members): JPanel
+}
+
+class DefaultStorePanelFactory
+class RestaurantPanelFactory
+
+StorePanelFactory <|.. DefaultStorePanelFactory
+StorePanelFactory <|.. RestaurantPanelFactory
+StoreGUI o-- StorePanelFactory
+StoreGUI --> "1" Store
+
+@enduml
+
+
+@startuml RestaurantState
+
+class TableContext {
+  -state: TableState
+  -member: Customer
+  +reserve()
+  +seat(mem)
+  +cancel()
+  +order(map)
+  +checkout(): double
+}
+
+interface TableState {
+  +name(): String
+  +reserve(ctx)
+  +seat(ctx)
+  +cancel(ctx)
+  +order(ctx,map)
+  +checkout(ctx): double
+}
+
+class EmptyState
+class ReservedState
+class OccupiedState
+
+TableState <|.. EmptyState
+TableState <|.. ReservedState
+TableState <|.. OccupiedState
+TableContext *-- TableState : current
+TableContext --> RestaurantStore
+
+' ===== 套餐計價 =====
+interface SalesRule
+class RestaurantSalesRule extends SalesRule {
+  -store: RestaurantStore
+  +applySale(items,member)
+}
+abstract Store {
+    #salesRule: SalesRule
+}
+abstract NormalSalesGUIStore extends Store
+class RestaurantStore extends NormalSalesGUIStore {
+  -productCategoryMap: Map
+
+  +settleOrder(order,member,checkout)
+  +getCategoryOf(name)
+}
+Store --> SalesRule
+RestaurantSalesRule ..> RestaurantStore
+
+@enduml
+
+
+@startuml ConcreteStores
+skinparam classAttributeIconSize 0
+
+abstract class Store {
+  -productCategories: List
+  -productRegistry: InventoryManager
+  +sell(name,qty,customer)
+  +stockShelf(name,qty)
+  #initStore()
+}
+
+abstract class NormalSalesGUIStore extends Store
+class StationeryStore
+class VegetableStore
+class RestaurantStore
+
+NormalSalesGUIStore <|-- StationeryStore
+NormalSalesGUIStore <|-- VegetableStore
+NormalSalesGUIStore <|-- RestaurantStore
+
+StationeryStore ..> MembershipSalesRule
+VegetableStore ..> SimpleSalesRule
+RestaurantStore ..> RestaurantSalesRule
+
+@enduml
