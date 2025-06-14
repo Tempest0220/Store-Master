@@ -22,7 +22,7 @@ public abstract class Store {
     protected void _CategoryAddProduct(String prodName, String catName) {
         ProductComponent target = productRegistry.getProduct(prodName);
         if (target == null) return;
-        _CategoryRemoveItemRecusive(target, productCategories);
+        _CategoryRemoveItemRecursive(target, productCategories);
         ProductCategory dest = _findCategory(catName);
         if (dest != null && !dest.getChildren().contains(target)) dest.add(target);
     }
@@ -63,7 +63,7 @@ public abstract class Store {
     protected void _RegistryDeleteProduct(String prodName) {
         ProductComponent p = productRegistry.getProduct(prodName);
         if (p == null) return;
-        _CategoryRemoveItemRecusive(p, productCategories);
+        _CategoryRemoveItemRecursive(p, productCategories);
         productRegistry.removeProduct(prodName);
     }
 
@@ -81,13 +81,13 @@ public abstract class Store {
     }
 
     // ---- 工具函數 ----
-    protected boolean _CategoryRemoveItemRecusive(ProductComponent p, List<ProductCategory> pool) {
+    protected boolean _CategoryRemoveItemRecursive(ProductComponent p, List<ProductCategory> pool) {
         for (ProductCategory c : pool) {
             if (c.getChildren().contains(p)) {
                 c.remove(p);
                 return true;
             }
-            if (_CategoryRemoveItemRecusive(p, _extractSubs(c))) return true;
+            if (_CategoryRemoveItemRecursive(p, _extractSubs(c))) return true;
         }
         return false;
     }
