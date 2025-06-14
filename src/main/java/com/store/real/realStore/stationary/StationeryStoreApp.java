@@ -1,7 +1,7 @@
-package com.store.real.store.stationary;
+package com.store.real.realStore.stationary;
 
 import com.store.framework.Store;
-import com.store.real.store.StoreGUI;
+import com.store.real.realStore.StoreGUI;
 
 import javax.swing.SwingUtilities;
 

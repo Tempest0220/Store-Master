@@ -1,7 +1,7 @@
-package com.store.real.store;
+package com.store.real.realStore;
 
 import com.store.framework.*;
-import com.store.real.store.stationary.StationeryStore;
+import com.store.real.realStore.stationary.StationeryStore;
 
 import javax.swing.*;
 import javax.swing.tree.*;

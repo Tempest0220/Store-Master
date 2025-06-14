@@ -1,4 +1,4 @@
-package com.store.real.store.vegetable;
+package com.store.real.realStore.vegetable;
 
 import com.store.framework.*;
 

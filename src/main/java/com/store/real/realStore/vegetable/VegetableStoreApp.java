@@ -1,8 +1,7 @@
-package com.store.real.store.vegetable;
+package com.store.real.realStore.vegetable;
 
 import com.store.framework.Store;
-import com.store.real.store.StoreGUI;
-import com.store.real.store.stationary.StationeryStore;
+import com.store.real.realStore.StoreGUI;
 
 import javax.swing.*;
 
