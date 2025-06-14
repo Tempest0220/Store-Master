@@ -1,12 +1,21 @@
 package com.store.real.store;
 
 import com.store.framework.*;
+import com.store.real.store.stationary.StationeryStore;
 
 import javax.swing.*;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Map;
+import java.util.HashMap;
+
+
 
 public class StoreGUI extends GUIWindow {
     private final Map<String, Customer> members = new HashMap<>();
@@ -30,55 +39,144 @@ public class StoreGUI extends GUIWindow {
     @Override
     protected JPanel getSalesPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        JPanel form = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField txtProduct = new JTextField(10);
-        JTextField txtQty     = new JTextField(3);
-        JTextField txtMember  = new JTextField(6);
-        JButton btnSell       = new JButton("結帳");
-        JTextArea log         = new JTextArea(8, 40);
-        log.setEditable(false);
 
-        form.add(new JLabel("品名：")); form.add(txtProduct);
-        form.add(new JLabel("數量：")); form.add(txtQty);
-        form.add(new JLabel("會員ID：")); form.add(txtMember);
-        form.add(btnSell);
+        // 1. 會員輸入區
+        JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        memberPanel.add(new JLabel("會員ID："));
+        JTextField txtMemberID = new JTextField(8);
+        memberPanel.add(txtMemberID);
+        panel.add(memberPanel, BorderLayout.NORTH);
 
-        btnSell.addActionListener(e -> {
-            String name = txtProduct.getText().trim();
-            // 先檢查商品是否存在
-            if (!store.RegistryIsProductNameExist(name)) {
-                JOptionPane.showMessageDialog(panel,
-                        "商品不存在：" + name,
-                        "錯誤",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
+        // 2. 左：商品樹
+        DefaultTreeModel treeModel = new DefaultTreeModel(buildTreeRoot());
+        JTree productTree = new JTree(treeModel);
+        productTree.setRootVisible(false);
+        productTree.setShowsRootHandles(true);
+        productTree.setCellRenderer(new ProductTreeCellRenderer());
+        JScrollPane treeScroll = new JScrollPane(productTree);
+        treeScroll.setPreferredSize(new Dimension(300, 0));
+
+        // 3. 右：暫存清單
+        DefaultListModel<String> cartListModel = new DefaultListModel<>();
+        JList<String> cartList = new JList<>(cartListModel);
+        JScrollPane cartScroll = new JScrollPane(cartList);
+        cartScroll.setBorder(BorderFactory.createTitledBorder("暫存清單"));
+
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                treeScroll, cartScroll);
+        split.setResizeWeight(0.6);
+
+        // 4. 底部：總價、按鈕
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel totalLabel   = new JLabel("總價：0.00");
+        JButton btnClear    = new JButton("清除清單");
+        JButton btnCheckout = new JButton("結帳");
+        btnCheckout.setEnabled(false); // 初始停用
+        footer.add(totalLabel);
+        footer.add(btnClear);
+        footer.add(btnCheckout);
+
+        panel.add(split, BorderLayout.CENTER);
+        panel.add(footer, BorderLayout.SOUTH);
+
+        // 購物車資料結構
+        Map<String,Integer> cart = new HashMap<>();
+
+        // 更新總價＆按鈕狀態
+        Runnable updateTotal = () -> {
+            String memberId = txtMemberID.getText().trim();
+            Customer member = members.get(memberId);
+            boolean hasValidMember = memberId.isEmpty() || (member != null);
+            btnCheckout.setEnabled(hasValidMember && !cart.isEmpty());
+
+            double total = 0;
+            for (var entry : cart.entrySet()) {
+                String key = entry.getKey();
+                int qty    = entry.getValue();
+                ProductComponent p = ((StationeryStore)store).getProduct(key);
+                if (p == null) continue;
+                double base = p.getPrice() * qty;
+                if (!memberId.isEmpty() && member != null) {
+                    // 使用 applySale 但不影響真實會員點數
+                    total += ((StationeryStore)store).applySale(p, qty, new Customer(memberId));
+                } else {
+                    total += base;
+                }
             }
-            int qty;
-            try {
-                qty = Integer.parseInt(txtQty.getText().trim());
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(panel,
-                        "數量格式錯誤",
-                        "錯誤",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            Customer c = members.get(txtMember.getText().trim());
-            try {
-                store.sell(name, qty, c);
-                log.append("售出 " + qty + "×" + name + (c == null ? " (無會員折扣)\n" : "\n"));
-            } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(panel,
-                        ex.getMessage(),
-                        "錯誤",
-                        JOptionPane.ERROR_MESSAGE);
+            totalLabel.setText("總價：" + String.format("%.2f", total));
+        };
+
+        // 會員輸入變動時
+        txtMemberID.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e)  { updateTotal.run(); }
+            public void removeUpdate(DocumentEvent e)  { updateTotal.run(); }
+            public void changedUpdate(DocumentEvent e) { updateTotal.run(); }
+        });
+
+        // 雙擊樹狀選商品加入暫存
+        productTree.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+                    TreePath path = productTree.getPathForLocation(e.getX(), e.getY());
+                    if (path == null) return;
+                    Object node = ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
+                    if (node instanceof ProductItem item) {
+                        String name = item.getName();
+                        cart.put(name, cart.getOrDefault(name, 0) + 1);
+                        // 更新 listModel
+                        cartListModel.clear();
+                        for (var entry : cart.entrySet()) {
+                            String key = entry.getKey();
+                            int qty    = entry.getValue();
+                            ProductComponent p = ((StationeryStore)store).getProduct(key);
+                            double price = p.getPrice() * qty;
+                            cartListModel.addElement(
+                                    key + " x " + qty + " = " + String.format("%.2f", price)
+                            );
+                        }
+                        updateTotal.run();
+                    }
+                }
             }
         });
 
-        panel.add(form, BorderLayout.NORTH);
-        panel.add(new JScrollPane(log), BorderLayout.CENTER);
+        // 清除清單
+        btnClear.addActionListener(e -> {
+            cart.clear();
+            cartListModel.clear();
+            updateTotal.run();
+        });
+
+        // 結帳
+        btnCheckout.addActionListener(e -> {
+            String memberId = txtMemberID.getText().trim();
+            Customer member = members.get(memberId);
+            StringBuilder sb = new StringBuilder();
+            for (var entry : cart.entrySet()) {
+                String key = entry.getKey();
+                int qty    = entry.getValue();
+                try {
+                    store.sell(key, qty, member);
+                    sb.append("售出 ").append(qty).append("×").append(key).append("\n");
+                } catch (IllegalArgumentException ex) {
+                    sb.append("失敗：").append(ex.getMessage()).append("\n");
+                }
+            }
+            JOptionPane.showMessageDialog(panel, sb.toString(), "結帳結果",
+                    JOptionPane.INFORMATION_MESSAGE);
+            cart.clear();
+            cartListModel.clear();
+            updateTotal.run();
+        });
+
+        // 初始拆分位置
+        SwingUtilities.invokeLater(() -> split.setDividerLocation(0.6));
+
         return panel;
     }
+
+
 
 
     /* ========== 二、進貨面板（原樣） ========== */
@@ -208,12 +306,7 @@ public class StoreGUI extends GUIWindow {
                         if(discountRate < 0 || discountRate > 1){
                             JOptionPane.showMessageDialog(panel, "折扣必須介於0和1之間", "輸入錯誤", JOptionPane.ERROR_MESSAGE);
                         } else {
-                            item.setDiscount(new Discount() {
-                                @Override
-                                public double getPrice(double price) {
-                                    return price * discountRate;
-                                }
-                            });
+                            item.setDiscount(price -> price * discountRate);
                         }
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(panel, "折扣格式錯誤", "輸入錯誤", JOptionPane.ERROR_MESSAGE);

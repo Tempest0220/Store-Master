@@ -57,4 +57,11 @@ public class StationeryStore extends Store {
         System.out.printf("Sold %d x %s for total: %.2f%n",
                 quantity, productName, total);
     }
+    public ProductComponent getProduct(String key){
+        return productRegistry.getProduct(key);
+    }
+    public double applySale(ProductComponent p, int qty, Customer customer){
+        return salesRule.applySale(p, qty, customer);
+    }
+
 }
