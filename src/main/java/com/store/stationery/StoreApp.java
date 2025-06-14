@@ -17,7 +17,7 @@ public class StoreApp {
 
         // 在 Swing UI Thread 啟動
         SwingUtilities.invokeLater(() -> {
-            StoreGUI gui = new StoreGUI(new Store[]{vegetableStore, stationeryStore});
+            StoreGUI gui = new StoreGUI(new Store[]{vegetableStore, stationeryStore}); // 只會取第一個Store物件
             gui.run();
         });
     }
