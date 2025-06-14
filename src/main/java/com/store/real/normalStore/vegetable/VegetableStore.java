@@ -15,7 +15,7 @@ public class VegetableStore extends NormalSalesGUIStore {
     protected void initStore() {
         ProductCategory leafy = new ProductCategory("葉菜類");
         ProductCategory root = new ProductCategory("根莖類");
-        ProductCategory expired = new ProductCategory("過期產品");
+        ProductCategory expired = new ProductCategory("即期產品");
         productCategories.add(leafy);
         productCategories.add(root);
         productCategories.add(expired);
@@ -31,11 +31,11 @@ public class VegetableStore extends NormalSalesGUIStore {
                     }
                 });
 
-        ProductComponent expiredCabbage = new ExpiringProductItem("過期高麗菜", 10, 0, LocalDate.now().minusDays(1),
+        ProductComponent expiredCabbage = new ExpiringProductItem("即期高麗菜", 10, 0, LocalDate.now().minusDays(1),
                 new Discount() {
                     @Override
                     public double getPrice(double price) {
-                        return price * 0.5; // 過期高麗菜打五折
+                        return price * 0.5; // 即期高麗菜打五折
                     }
                 });
         leafy.add(cabbage);
@@ -54,7 +54,7 @@ public class VegetableStore extends NormalSalesGUIStore {
         RegistrySetProductStock("菠菜", 40);
         RegistrySetProductStock("紅蘿蔔", 60);
         RegistrySetProductStock("馬鈴薯", 80);
-        RegistrySetProductStock("過期高麗菜", 10);
+        RegistrySetProductStock("即期高麗菜", 10);
     }
 
     @Override
