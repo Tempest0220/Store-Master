@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * 只負責外框與畫面切換的精簡版 GUI。
- * 具體畫面由 StorePanelFactory 生成，保持未來可替換彈性。
+ * 具體畫面由 StorePanelFactory 生成
  */
 public class StoreGUI extends JFrame {
 

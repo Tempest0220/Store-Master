@@ -32,7 +32,10 @@ public class NormalManagementPanel extends JPanel {
     private void build(){
         memberModel = new DefaultListModel<>();
         memberList  = new JList<>(memberModel);
-        memberModel.addElement("A1001");
+        String defaultMemberId = "A1001";
+        memberModel.addElement(defaultMemberId);
+        members.put(defaultMemberId, new Customer(defaultMemberId));
+
 
         // 上：商品管理面板，下：會員管理面板
         JSplitPane split = new JSplitPane(

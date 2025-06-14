@@ -1,4 +1,3 @@
-// src/main/java/com/store/stationery/StationeryStore.java
 package com.store.real.normalStore.stationary;
 
 import com.store.framework.*;
