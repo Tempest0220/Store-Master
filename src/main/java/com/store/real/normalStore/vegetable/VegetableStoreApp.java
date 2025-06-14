@@ -5,15 +5,25 @@ import com.store.framework.SimpleSalesRule;
 import com.store.gui.StoreGUI;
 import com.store.gui.concreteFactory.DefaultStorePanelFactory;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class VegetableStoreApp {
     public static void main(String[] args) {
-        Store store = new VegetableStore(
-                "My Vegetable Shop",
-                new SimpleSalesRule());   // 改用不含會員的銷售規則
+        SwingUtilities.invokeLater(() -> {
+            Store store = new VegetableStore(
+                    "My Vegetable Shop",
+                    new SimpleSalesRule()); // 不含會員折扣的規則
 
-        SwingUtilities.invokeLater(() ->
-                new StoreGUI(store, new DefaultStorePanelFactory()).run());
+            StoreGUI gui = new StoreGUI(store, new DefaultStorePanelFactory());
+
+            // 用 JFrame 包住 StoreGUI（現在是 JPanel）
+            JFrame frame = new JFrame(store.getName() + " 管理介面");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(1000, 500);
+            frame.setLocationRelativeTo(null);
+            frame.setJMenuBar(gui.getMenuBar()); // 加入 GUI 中的選單列
+            frame.setContentPane(gui);           // 加入內容面板
+            frame.setVisible(true);
+        });
     }
 }

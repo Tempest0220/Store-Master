@@ -9,50 +9,64 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 只負責外框與畫面切換的精簡版 GUI。
+ * 支援外框與畫面切換的內嵌式 GUI。
  * 具體畫面由 StorePanelFactory 生成
  */
-public class StoreGUI extends JFrame {
+public class StoreGUI extends JPanel {
 
     private final Store store;
     private final StorePanelFactory factory;
     private final Map<String, Customer> members = new HashMap<>();
 
-    private final CardLayout cards  = new CardLayout();
-    private final JPanel     center = new JPanel(cards);
+    private final CardLayout cards = new CardLayout();
+    private final JPanel center = new JPanel(cards);
+
+    private final JMenuBar menuBar = new JMenuBar();
 
     public StoreGUI(Store store, StorePanelFactory factory) {
-        this.store   = store;
+        this.store = store;
         this.factory = factory;
         initUI();
     }
 
     private void initUI() {
-        setTitle(store.getName() + " 管理介面");
-        setSize(1000, 500);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
         /* 三大畫面 */
         center.add(factory.createSalesPanel(store, members), "SALE");
-        center.add(factory.createReceivingPanel(store),      "RECV");
+        center.add(factory.createReceivingPanel(store), "RECV");
         center.add(factory.createManagementPanel(store, members), "MGMT");
         add(center, BorderLayout.CENTER);
 
         /* Menu */
-        JMenuBar bar = new JMenuBar();
-        JMenu menu  = new JMenu("畫面：售貨");
+        JMenu menu = new JMenu("畫面：售貨");
         JMenuItem miSale = new JMenuItem("售貨");
         JMenuItem miRecv = new JMenuItem("進貨");
         JMenuItem miMgmt = new JMenuItem("管理");
-        menu.add(miSale); menu.add(miRecv); menu.add(miMgmt);
-        bar.add(menu);
-        setJMenuBar(bar);
+        menu.add(miSale);
+        menu.add(miRecv);
+        menu.add(miMgmt);
+        menuBar.add(menu);
 
-        miSale.addActionListener(e -> { cards.show(center, "SALE"); menu.setText("畫面：售貨"); });
-        miRecv.addActionListener(e -> { cards.show(center, "RECV"); menu.setText("畫面：進貨"); });
-        miMgmt.addActionListener(e -> { cards.show(center, "MGMT"); menu.setText("畫面：管理"); });
+        miSale.addActionListener(e -> {
+            cards.show(center, "SALE");
+            menu.setText("畫面：售貨");
+        });
+        miRecv.addActionListener(e -> {
+            cards.show(center, "RECV");
+            menu.setText("畫面：進貨");
+        });
+        miMgmt.addActionListener(e -> {
+            cards.show(center, "MGMT");
+            menu.setText("畫面：管理");
+        });
     }
 
-    public void run() { setVisible(true); }
+    public JMenuBar getMenuBar() {
+        return menuBar;
+    }
+
+    public Store getStore() {
+        return store;
+    }
 }
