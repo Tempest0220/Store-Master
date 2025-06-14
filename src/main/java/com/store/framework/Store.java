@@ -18,6 +18,15 @@ public abstract class Store {
     /** 子類只需實作初始化邏輯 */
     protected abstract void initStore();
 
+    public void receive(String name, int qty) {
+        ProductComponent product = productRegistry.getProduct(name);
+        if (product != null) {
+            product.setQuantity(product.getQuantity() + qty);
+        } else {
+            throw new IllegalArgumentException("商品不存在: " + name);
+        }
+    }
+
     // ---- category 增刪改查 ----
     protected void _CategoryAddProduct(String prodName, String catName) {
         ProductComponent target = productRegistry.getProduct(prodName);
