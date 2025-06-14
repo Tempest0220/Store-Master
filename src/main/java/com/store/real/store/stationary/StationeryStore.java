@@ -1,5 +1,5 @@
 // src/main/java/com/store/stationery/StationeryStore.java
-package com.store.stationery;
+package com.store.real.store.stationary;
 
 import com.store.framework.*;
 
