@@ -6,8 +6,8 @@ import com.store.real.normalStore.NormalSalesGUIStore;
 import java.time.LocalDate;
 
 public class VegetableStore extends NormalSalesGUIStore {
-    public VegetableStore(String name, SalesRule rule) {
-        super(name, rule);
+    public VegetableStore(String name) {
+        super(name, new MembershipSalesRule(0.1));
         initStore();
     }
 

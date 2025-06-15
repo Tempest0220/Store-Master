@@ -4,8 +4,8 @@ import com.store.framework.*;
 import com.store.real.normalStore.NormalSalesGUIStore;
 
 public class StationeryStore extends NormalSalesGUIStore {
-    public StationeryStore(String name, SalesRule rule) {
-        super(name, rule);
+    public StationeryStore(String name) {
+        super(name, new MembershipSalesRule(0.1));
         initStore();
     }
 

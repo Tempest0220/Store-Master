@@ -8,12 +8,9 @@ import javax.swing.*;
 public class RestaurantStoreApp {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(()->{
-            RestaurantSalesRule restaurantSalesRule = new RestaurantSalesRule(null);
             RestaurantStore store = new RestaurantStore(
-                    "My Restaurant",
-                    restaurantSalesRule
+                    "My Restaurant"
             );
-            restaurantSalesRule.setStore(store);
 
             StoreGUI gui = new StoreGUI(store, new RestaurantPanelFactory());
             JFrame f = new JFrame(store.getName()+" 管理介面");

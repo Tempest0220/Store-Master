@@ -11,8 +11,7 @@ public class StationeryStoreApp {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Store store = new StationeryStore(
-                    "My Stationery Shop",
-                    new MembershipSalesRule(0.1));
+                    "My Stationery Shop");
 
             StoreGUI gui = new StoreGUI(store, new DefaultStorePanelFactory());
 

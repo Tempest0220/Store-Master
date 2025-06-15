@@ -12,9 +12,11 @@ public class RestaurantStore extends NormalSalesGUIStore {
     /** productName -> category，供計價規則判斷套餐用 */
     private final Map<String, String> productCategoryMap = new HashMap<>();
 
-    public RestaurantStore(String name, SalesRule rule) {
-        super(name, rule);
+
+    public RestaurantStore(String name) {
+        super(name, new RestaurantSalesRule(null));
         initStore();
+        ((RestaurantSalesRule)this.salesRule).setStore(this);
     }
 
     @Override protected void initStore() {
