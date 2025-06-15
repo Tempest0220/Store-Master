@@ -15,9 +15,6 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 售貨（結帳）畫面。支援輸入數量加入購物車。
- */
 public class NormalSalesPanel extends JPanel {
 
     private final Store store;
@@ -25,20 +22,18 @@ public class NormalSalesPanel extends JPanel {
 
     public NormalSalesPanel(Store store, Map<String, Customer> members) {
         super(new BorderLayout());
-        this.store   = store;
+        this.store = store;
         this.members = members;
         build();
     }
 
     private void build() {
-        // 1. 會員輸入欄
         JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         memberPanel.add(new JLabel("會員ID："));
         JTextField txtMemberID = new JTextField(8);
         memberPanel.add(txtMemberID);
         add(memberPanel, BorderLayout.NORTH);
 
-        // 2. 商品樹
         DefaultTreeModel treeModel = new DefaultTreeModel(buildTreeRoot());
         JTree productTree = new JTree(treeModel);
         productTree.setRootVisible(false);
@@ -48,7 +43,6 @@ public class NormalSalesPanel extends JPanel {
         JScrollPane treeScroll = new JScrollPane(productTree);
         treeScroll.setPreferredSize(new Dimension(300, 0));
 
-        // 3. 購物車清單
         DefaultListModel<String> cartModel = new DefaultListModel<>();
         JList<String> cartList = new JList<>(cartModel);
         JScrollPane cartScroll = new JScrollPane(cartList);
@@ -58,18 +52,18 @@ public class NormalSalesPanel extends JPanel {
                 JSplitPane.HORIZONTAL_SPLIT, treeScroll, cartScroll);
         split.setResizeWeight(0.6);
 
-        // 4. 結帳欄
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel lblTotal = new JLabel("總價：0.00");
         JButton btnClear = new JButton("清除清單");
         JButton btnCheckout = new JButton("結帳");
         btnCheckout.setEnabled(false);
-        footer.add(lblTotal); footer.add(btnClear); footer.add(btnCheckout);
+        footer.add(lblTotal);
+        footer.add(btnClear);
+        footer.add(btnCheckout);
 
         add(split, BorderLayout.CENTER);
         add(footer, BorderLayout.SOUTH);
 
-        // 購物車資料與計算
         Map<String, Integer> cart = new HashMap<>();
 
         Runnable updateTotal = () -> {
@@ -96,12 +90,19 @@ public class NormalSalesPanel extends JPanel {
         };
 
         txtMemberID.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e)  { updateTotal.run(); }
-            public void removeUpdate(DocumentEvent e)  { updateTotal.run(); }
-            public void changedUpdate(DocumentEvent e){ updateTotal.run(); }
+            public void insertUpdate(DocumentEvent e) {
+                updateTotal.run();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                updateTotal.run();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                updateTotal.run();
+            }
         });
 
-        // 雙擊加入購物車 → 輸入數量
         productTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -123,9 +124,36 @@ public class NormalSalesPanel extends JPanel {
                             try {
                                 int qty = Integer.parseInt(input.trim());
                                 if (qty <= 0) throw new NumberFormatException();
-                                cart.put(name, cart.getOrDefault(name, 0) + qty);
+
+                                // 檢查庫存限制
+                                int currentQty = cart.getOrDefault(name, 0);
+                                int newQty = currentQty + qty;
+
+                                ProductComponent p = ((NormalSalesGUIStore) store).getProduct(name);
+                                if (p == null) {
+                                    JOptionPane.showMessageDialog(
+                                            NormalSalesPanel.this,
+                                            "找不到該商品資料",
+                                            "錯誤",
+                                            JOptionPane.ERROR_MESSAGE
+                                    );
+                                    return;
+                                }
+
+                                if (newQty > p.getQuantity()) {
+                                    JOptionPane.showMessageDialog(
+                                            NormalSalesPanel.this,
+                                            "庫存不足，最多可加入 " + (p.getQuantity() - currentQty) + " 個。",
+                                            "庫存不足",
+                                            JOptionPane.ERROR_MESSAGE
+                                    );
+                                    return;
+                                }
+
+                                cart.put(name, newQty);
                                 redrawCart(cartModel, cart);
                                 updateTotal.run();
+
                             } catch (NumberFormatException ex) {
                                 JOptionPane.showMessageDialog(
                                         NormalSalesPanel.this,
@@ -140,12 +168,12 @@ public class NormalSalesPanel extends JPanel {
             }
         });
 
-        // 清空購物車
         btnClear.addActionListener(e -> {
-            cart.clear(); cartModel.clear(); updateTotal.run();
+            cart.clear();
+            cartModel.clear();
+            updateTotal.run();
         });
 
-        // 結帳事件
         btnCheckout.addActionListener(e -> {
             String id = txtMemberID.getText().trim();
             Customer member = members.get(id);
@@ -164,13 +192,14 @@ public class NormalSalesPanel extends JPanel {
 
             JOptionPane.showMessageDialog(this, sb.toString(),
                     "結帳結果", JOptionPane.INFORMATION_MESSAGE);
-            cart.clear(); cartModel.clear(); updateTotal.run();
+            cart.clear();
+            cartModel.clear();
+            updateTotal.run();
         });
 
         SwingUtilities.invokeLater(() -> split.setDividerLocation(0.6));
     }
 
-    // === 工具方法 ===
     private DefaultMutableTreeNode buildTreeRoot() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("ROOT");
         for (ProductCategory cat : store.CategoryGetCategories()) {
@@ -194,7 +223,6 @@ public class NormalSalesPanel extends JPanel {
         cart.forEach((k, v) -> model.addElement(k + " x " + v));
     }
 
-    // 自訂顯示庫存與價格
     private static class ProductTreeCellRenderer extends DefaultTreeCellRenderer {
         @Override
         public Component getTreeCellRendererComponent(
