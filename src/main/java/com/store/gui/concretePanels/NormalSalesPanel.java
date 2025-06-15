@@ -172,6 +172,7 @@ public class NormalSalesPanel extends JPanel {
             cart.clear();
             cartModel.clear();
             updateTotal.run();
+            treeModel.setRoot(buildTreeRoot());
         });
 
         btnCheckout.addActionListener(e -> {
