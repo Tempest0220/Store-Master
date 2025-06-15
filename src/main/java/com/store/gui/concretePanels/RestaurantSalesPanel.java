@@ -64,23 +64,74 @@ public class RestaurantSalesPanel extends JPanel {
                 JMenuItem miSeat    = new JMenuItem("帶位");
                 menu.add(miReserve); menu.add(miSeat);
 
-                miReserve.addActionListener(e->{ table.reserve(); refresh(btn); });
-                miSeat.addActionListener(e->{
-                    Customer mem = chooseMember();
-                    table.seat(mem);
+                miReserve.addActionListener(e->{
+                    table.reserve();
                     refresh(btn);
-                    openOrderPane(table, btn);
+                });
+
+                miSeat.addActionListener(e -> {
+                    Customer mem = chooseMember();
+                    if (mem == null) {
+                        int confirm = JOptionPane.showConfirmDialog(this,
+                                "無會員，是否要以非會員身份帶位？",
+                                "帶位確認",
+                                JOptionPane.YES_NO_OPTION);
+                        if (confirm != JOptionPane.YES_OPTION) return;
+                    }
+                    int confirm = JOptionPane.showConfirmDialog(this,
+                            "確定要帶位嗎？",
+                            "帶位確認",
+                            JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        try {
+                            table.seat(mem);
+                            refresh(btn);
+                            openOrderPane(table, btn);
+                        } catch (UnsupportedOperationException ex) {
+                            JOptionPane.showMessageDialog(this,
+                                    "此狀態無法帶位",
+                                    "錯誤",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 });
             }
             case "預約中" -> {
                 JMenuItem miSeat = new JMenuItem("帶位");
                 JMenuItem miCancel = new JMenuItem("取消預約");
                 menu.add(miSeat); menu.add(miCancel);
-                miSeat.addActionListener(e->{
+
+                miSeat.addActionListener(e -> {
                     Customer mem = chooseMember();
-                    table.seat(mem); refresh(btn); openOrderPane(table, btn);
+                    if (mem == null) {
+                        int confirm = JOptionPane.showConfirmDialog(this,
+                                "無會員，是否要以非會員身份帶位？",
+                                "帶位確認",
+                                JOptionPane.YES_NO_OPTION);
+                        if (confirm != JOptionPane.YES_OPTION) return;
+                    }
+                    int confirm = JOptionPane.showConfirmDialog(this,
+                            "確定要帶位嗎？",
+                            "帶位確認",
+                            JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        try {
+                            table.seat(mem);
+                            refresh(btn);
+                            openOrderPane(table, btn);
+                        } catch (UnsupportedOperationException ex) {
+                            JOptionPane.showMessageDialog(this,
+                                    "此狀態無法帶位",
+                                    "錯誤",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 });
-                miCancel.addActionListener(e->{ table.cancel(); refresh(btn); });
+
+                miCancel.addActionListener(e->{
+                    table.cancel();
+                    refresh(btn);
+                });
             }
             case "用餐中" -> {
                 JMenuItem miOrder   = new JMenuItem("點餐 / 修改");
