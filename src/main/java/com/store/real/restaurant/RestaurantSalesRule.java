@@ -5,10 +5,10 @@ import com.store.framework.*;
 import java.util.Map;
 
 /**
- * 套餐 + 會員折扣規則：<br/>
- * 1. 若同一張訂單同時包含「前菜、主食、甜點」各 ≥1 份，<br/>
- *    以可湊成的組數為單位，這三項菜色打 9 折 (10% off)。<br/>
- * 2. 若有會員，再於整筆金額額外打 9 折。<br/>
+ * 套餐 + 會員折扣規則：<br>
+ * 1. 若同一張訂單同時包含「前菜、主食、甜點」各 >= 1 份，
+ *    以可湊成的組數為單位，這三項菜色打 9 折 。<br>
+ * 2. 若有會員，再於整筆金額額外打 9 折。<br>
  */
 public class RestaurantSalesRule implements SalesRule {
 
@@ -63,7 +63,7 @@ public class RestaurantSalesRule implements SalesRule {
         return afterSet - memberDiscount;
     }
 
-    /* 單品版本維持相容（不套套餐規則） */
+    /** 單品版本維持相容（不套套餐規則） */
     @Override
     public double applySale(ProductComponent p, int qty, Customer c){
         return p.getPrice()*qty;

@@ -8,9 +8,9 @@ import java.util.Map;
 public class OccupiedState implements TableState {
     private Map<String,Integer> orderMap = new HashMap<>();
     @Override public String name(){return "用餐中";}
-    @Override public void reserve(TableContext ctx){ /* not allowed */ }
+    @Override public void reserve(TableContext ctx){ throw new UnsupportedOperationException(); }
     @Override public void seat(TableContext ctx){ /* already */ }
-    @Override public void cancel(TableContext ctx){ /* not allowed */ }
+    @Override public void cancel(TableContext ctx){ throw new UnsupportedOperationException(); }
 
     @Override
     public void order(TableContext ctx, Map<String,Integer> newCart){

@@ -1,6 +1,8 @@
 package com.store.framework;
 
-// Leaf node for individual products
+/**
+ * 葉節點
+ */
 public class ProductItem implements ProductComponent {
     private String name;
     private double price;

@@ -15,10 +15,10 @@ public class NormalManagementPanel extends JPanel {
     private final Store store;
     private final Map<String, Customer> members;
 
-    /* --- 會員清單 UI 元件 --- */
+
     private DefaultListModel<String> memberModel;
     private JList<String>            memberList ;
-    /* --- 商品樹狀結構 UI --- */
+
     private DefaultTreeModel productTreeModel;
     private JTree            productTree;
 

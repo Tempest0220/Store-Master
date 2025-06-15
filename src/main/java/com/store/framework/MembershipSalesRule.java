@@ -1,6 +1,8 @@
 package com.store.framework;
 
-// Applies a fixed discount rate and awards membership points
+/**
+ * 會員制的銷售規則：當有會員時打折
+ */
 public class MembershipSalesRule implements SalesRule {
     private double discountRate; // e.g., 0.1 for 10% off
 

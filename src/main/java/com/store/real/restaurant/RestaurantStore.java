@@ -9,7 +9,7 @@ import java.util.Map;
 /** 餐廳專用 Store：內含菜色分類表，並提供整張訂單結帳 API。 */
 public class RestaurantStore extends NormalSalesGUIStore {
 
-    /** productName → category，供計價規則判斷套餐用 */
+    /** productName -> category，供計價規則判斷套餐用 */
     private final Map<String, String> productCategoryMap = new HashMap<>();
 
     public RestaurantStore(String name, SalesRule rule) {

@@ -14,14 +14,14 @@ public class TableContext {
 
     public TableContext(int no, RestaurantStore store){ this.tableNo = no; this.store = store; }
 
-    /* --- 對外操作 --- */
+    // 對外操作
     public void reserve(){ state.reserve(this); }
     public void seat(Customer mem){ this.member = mem; state.seat(this); }
     public void cancel(){ state.cancel(this); }
     public void order(Map<String,Integer> items){ state.order(this, items); }
     public double checkout(){ return state.checkout(this); }
 
-    /* getter / setter 給 State 用 */
+    // getter, setter 給 State 用
     public void setState(TableState s){ this.state = s; }
     public String getStateName(){ return state.name(); }
     public int getTableNo(){ return tableNo; }

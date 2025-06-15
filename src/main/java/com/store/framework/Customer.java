@@ -1,6 +1,5 @@
 package com.store.framework;
 
-// Customer with membership points
 public class Customer {
     private String id;
     private int points;
@@ -14,7 +13,4 @@ public class Customer {
         this.points += pts;
     }
 
-    public int getPoints() {
-        return points;
-    }
 }

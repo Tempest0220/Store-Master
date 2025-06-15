@@ -21,8 +21,8 @@ public class VegetableStoreApp {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1000, 500);
             frame.setLocationRelativeTo(null);
-            frame.setJMenuBar(gui.getMenuBar()); // 加入 GUI 中的選單列
-            frame.setContentPane(gui);           // 加入內容面板
+            frame.setJMenuBar(gui.getMenuBar()); // 選單列
+            frame.setContentPane(gui);           // 內容面板
             frame.setVisible(true);
         });
     }

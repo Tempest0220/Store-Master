@@ -2,7 +2,9 @@ package com.store.framework;
 
 import java.util.*;
 
-// Composite category that can hold sub-products or items
+/**
+ * 可以擁有子物件或商品的Composite
+ */
 public class ProductCategory implements ProductComponent {
     private String name;
     private List<ProductComponent> children = new ArrayList<>();

@@ -5,7 +5,6 @@ import com.store.gui.concreteFactory.RestaurantPanelFactory;
 
 import javax.swing.*;
 
-/** 程式進入點 */
 public class RestaurantStoreApp {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(()->{

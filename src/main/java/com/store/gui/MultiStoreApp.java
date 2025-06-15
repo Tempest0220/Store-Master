@@ -13,6 +13,9 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 為方便demo開發出來的統一所有商店的GUI
+ */
 public class MultiStoreApp extends JFrame {
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel mainPanel = new JPanel(cardLayout);
