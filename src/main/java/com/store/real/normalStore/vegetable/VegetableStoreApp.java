@@ -1,5 +1,6 @@
 package com.store.real.normalStore.vegetable;
 
+import com.store.framework.MembershipSalesRule;
 import com.store.framework.Store;
 import com.store.framework.SimpleSalesRule;
 import com.store.gui.StoreGUI;
@@ -12,7 +13,7 @@ public class VegetableStoreApp {
         SwingUtilities.invokeLater(() -> {
             Store store = new VegetableStore(
                     "My Vegetable Shop",
-                    new SimpleSalesRule()); // 不含會員折扣的規則
+                    new MembershipSalesRule(0.1));
 
             StoreGUI gui = new StoreGUI(store, new DefaultStorePanelFactory());
 

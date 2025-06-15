@@ -12,7 +12,7 @@ public class StationeryStoreApp {
         SwingUtilities.invokeLater(() -> {
             Store store = new StationeryStore(
                     "My Stationery Shop",
-                    new MembershipSalesRule(0.05));
+                    new MembershipSalesRule(0.1));
 
             StoreGUI gui = new StoreGUI(store, new DefaultStorePanelFactory());
 

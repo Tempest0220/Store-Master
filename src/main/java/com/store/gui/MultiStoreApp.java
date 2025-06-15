@@ -32,11 +32,11 @@ public class MultiStoreApp extends JFrame {
         // 建立所有商店
         createAndAddStore("蔬菜店", new VegetableStore(
                 "My Vegetable Shop",
-                new SimpleSalesRule()));
+                new MembershipSalesRule(0.1)));
 
         createAndAddStore("文具店", new StationeryStore(
                 "My Stationery Shop",
-                new MembershipSalesRule(0.05)));
+                new MembershipSalesRule(0.1)));
 
         RestaurantSalesRule restaurantSalesRule = new RestaurantSalesRule(null);
         RestaurantStore restaurantStore = new RestaurantStore("My Restaurant", restaurantSalesRule);
