@@ -162,8 +162,13 @@ abstract class Store {
 }
 
 Store -> InventoryManager
+Interface SalesRule 
+SalesRule <- Store
 
-abstract class NormalSalesGUIStore extends Store
+abstract class NormalSalesGUIStore extends Store{
+  +getProduct(String key): ProductComponent
+  applySale(ProductComponent, qty, customer): double
+}
 class StationeryStore
 class VegetableStore
 class RestaurantStore

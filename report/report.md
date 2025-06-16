@@ -43,9 +43,33 @@
 - 使用Composite包裝商品，指它們可以分類管理，以及更清楚的GUI顯示
 
 - 每個ProductItem會有一個使用Strategy的Discount，代表打折促銷活動
+  ![](images/CoreFramework.png)
 
-
+### GUI抽象工廠
 
 - 因為每個店家有售貨、進貨與管理三個GUI畫面，使用Abstract Factory包裝GUI的生產
+  ![](images/GUIFactory.png)
+
+### 餐廳狀態實作
 
 - 在餐廳內，餐桌有3個狀態，使用State pattern管理餐桌狀態
+  ![](images/RestaurantState.png)
+
+### 抽象店家、實際店家與GUI委託繼承樹
+
+- 在抽象店家與實際店家之間，為了讓GUI可以透過店家取得庫存資訊，使用中間的抽象類別設計委託方法。
+  ![](images/ConcreteStores.png)
+
+## 未來展望
+
+1. 在文具店加上會員積點功能，結帳時會員可消耗點數獲取金額折抵
+
+2. 在蔬菜店的菜品期限加上實際用途，比對設定的今日日期，將過期商品自動下架，即期商品打折扣
+
+3. 在結帳時支援不同付費系統，如現金、信用卡刷卡、電子支付等
+
+## 統計資料與分工
+
+本專案共2176行程式碼，所有組員皆有參與程式碼撰寫與簡報製作。
+
+[專案Github](https://github.com/Tempest0220/Store-Master)
