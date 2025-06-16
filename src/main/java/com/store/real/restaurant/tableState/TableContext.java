@@ -1,6 +1,7 @@
-package com.store.real.restaurant;
+package com.store.real.restaurant.tableState;
 
 import com.store.framework.Customer;
+import com.store.real.restaurant.RestaurantStore;
 import com.store.real.restaurant.tableState.*;
 
 import java.util.Map;

@@ -3,7 +3,7 @@ package com.store.gui.concretePanels;
 import com.store.framework.Customer;
 import com.store.framework.ProductCategory;
 import com.store.framework.ProductComponent;
-import com.store.real.restaurant.TableContext;
+import com.store.real.restaurant.tableState.TableContext;
 import com.store.real.restaurant.RestaurantStore;
 
 import javax.swing.*;

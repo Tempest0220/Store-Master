@@ -1,6 +1,5 @@
 package com.store.real.restaurant.tableState;
 
-import com.store.real.restaurant.TableContext;
 import java.util.Map;
 
 /** State 介面：定義座位可執行的動作 */

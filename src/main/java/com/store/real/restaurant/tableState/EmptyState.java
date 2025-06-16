@@ -1,6 +1,6 @@
 package com.store.real.restaurant.tableState;
 
-import com.store.real.restaurant.TableContext;
+import com.store.real.restaurant.tableState.TableContext;
 
 import java.util.Map;
 
