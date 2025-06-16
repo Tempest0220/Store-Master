@@ -59,7 +59,16 @@ class MembershipSalesRule {
 SalesRule <|.. SimpleSalesRule
 SalesRule <|.. MembershipSalesRule
 
-ProductComponent --> SalesRule : 售價查詢
+abstract class Store {
+  -productCategories: List
+  -productRegistry: InventoryManager
+  -rule: SalesRule
+  +sell(name,qty,customer)
+  +stockShelf(name,qty)
+  #initStore()
+}
+Store --> InventoryManager: 管理庫存
+Store --> SalesRule: 查詢售價
 
 @enduml
 
